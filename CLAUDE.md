@@ -8,6 +8,7 @@ A nonpartisan, interactive simulator for the 2026 US midterms: move the national
 - `npm run dev`: local dev server at http://localhost:3000
 - `npm run build`: production build (must pass before committing)
 - `npm run lint`: ESLint (must pass before committing)
+- `.venv/Scripts/python pipeline/run.py [--refresh]`: rebuild and validate `data/clean/` (see `data/README.md`)
 
 ## Stack
 - Next.js 16 App Router under `src/`, TypeScript strict, Tailwind CSS v4.
@@ -29,6 +30,11 @@ A nonpartisan, interactive simulator for the 2026 US midterms: move the national
 - Lean = 2024 presidential margin on the **2026 district lines** minus the national margin. Never use the last House result as the baseline.
 - Nine states have new maps for 2026: AL, CA, FL, LA, NC, OH, TN, TX, UT.
 - Every number shown in the UI carries its source and as-of date.
+- Credit sources wherever their data is shown:
+  - the hex map: "Congressional District Hexmap by Daniel Donner for The Downballot", CC BY 4.0, linked to https://the-db.co/maps
+  - presidential results: The Downballot
+  - ratings: each forecaster by name.
+- Column meanings and conventions are in `data/README.md`. Margins are Democratic minus Republican, in points.
 
 **Model**
 - `src/lib/model` stays pure and deterministic (seeded RNG) with unit tests.

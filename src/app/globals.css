@@ -1,67 +1,204 @@
 @import "tailwindcss";
 
 /*
- * Design tokens. Party colors share the same OKLCH lightness so neither side
- * looks "heavier" than the other; toss-up is a neutral sand, never purple.
+ * Design tokens. Chart chrome follows the dataviz reference instance; the party rating
+ * scale is a diverging ramp (blue <-> red, neutral gray toss-up) whose two arms share
+ * OKLCH lightness steps, validated (ordinal + CVD) for each mode separately.
+ * Dark values are declared for the OS setting and for the explicit theme toggle.
  */
 :root {
-  --paper: oklch(0.975 0.006 85);
-  --card: oklch(0.995 0.002 85);
-  --ink: oklch(0.2 0.012 260);
-  --muted: oklch(0.47 0.015 260);
-  --line: oklch(0.9 0.008 85);
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --surface-2: #f2f1ed;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #6f6d68;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.1);
+  --focus: #0b0b0b;
 
-  --dem: oklch(0.55 0.15 255);
-  --dem-lean: oklch(0.76 0.08 255);
-  --tossup: oklch(0.84 0.035 85);
-  --rep-lean: oklch(0.76 0.08 25);
-  --rep: oklch(0.55 0.17 25);
+  --r-safe-d: #1859a8;
+  --r-likely-d: #3c86e4;
+  --r-lean-d: #80b4f9;
+  --r-toss: #868686;
+  --r-lean-r: #f19489;
+  --r-likely-r: #e95048;
+  --r-safe-r: #9c1b1b;
+  --r-safe-d-ink: #ffffff;
+  --r-likely-d-ink: #ffffff;
+  --r-lean-d-ink: #0b0b0b;
+  --r-toss-ink: #ffffff;
+  --r-lean-r-ink: #0b0b0b;
+  --r-likely-r-ink: #ffffff;
+  --r-safe-r-ink: #ffffff;
+
+  --dem: #3c86e4;
+  --rep: #e95048;
+  --ind: #eda100;
+
+  /* Non-partisan magnitude (money, agreement): one teal hue, light -> dark. */
+  --m-1: #8bcdbf;
+  --m-2: #4eb6a4;
+  --m-3: #0f9b89;
+  --m-4: #058171;
+  --m-5: #02675a;
+  --m-6: #005146;
+
+  --good: #0ca30c;
+  --warn: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --paper: oklch(0.17 0.01 260);
-    --card: oklch(0.21 0.012 260);
-    --ink: oklch(0.94 0.006 85);
-    --muted: oklch(0.7 0.012 260);
-    --line: oklch(0.3 0.012 260);
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #242422;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #9a9890;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.1);
+    --focus: #f0efec;
 
-    --dem: oklch(0.66 0.14 255);
-    --dem-lean: oklch(0.46 0.08 255);
-    --tossup: oklch(0.42 0.025 85);
-    --rep-lean: oklch(0.46 0.08 25);
-    --rep: oklch(0.66 0.16 25);
+    --r-safe-d: #69a3f1;
+    --r-likely-d: #3d80d7;
+    --r-lean-d: #3063a6;
+    --r-toss: #8c8c8c;
+    --r-lean-r: #a04038;
+    --r-likely-r: #d24d45;
+    --r-safe-r: #ec7c71;
+    --r-safe-d-ink: #0b0b0b;
+    --r-likely-d-ink: #ffffff;
+    --r-lean-d-ink: #ffffff;
+    --r-toss-ink: #0b0b0b;
+    --r-lean-r-ink: #ffffff;
+    --r-likely-r-ink: #ffffff;
+    --r-safe-r-ink: #0b0b0b;
+
+    --dem: #3d80d7;
+    --rep: #d24d45;
+    --ind: #e5a52a;
+
+    --m-1: #075449;
+    --m-2: #046d5f;
+    --m-3: #038777;
+    --m-4: #1ea28f;
+    --m-5: #4bbaa7;
+    --m-6: #78d1c0;
   }
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #242422;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --muted: #9a9890;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255, 255, 255, 0.1);
+  --focus: #f0efec;
+
+  --r-safe-d: #69a3f1;
+  --r-likely-d: #3d80d7;
+  --r-lean-d: #3063a6;
+  --r-toss: #8c8c8c;
+  --r-lean-r: #a04038;
+  --r-likely-r: #d24d45;
+  --r-safe-r: #ec7c71;
+  --r-safe-d-ink: #0b0b0b;
+  --r-likely-d-ink: #ffffff;
+  --r-lean-d-ink: #ffffff;
+  --r-toss-ink: #0b0b0b;
+  --r-lean-r-ink: #ffffff;
+  --r-likely-r-ink: #ffffff;
+  --r-safe-r-ink: #0b0b0b;
+
+  --dem: #3d80d7;
+  --rep: #d24d45;
+  --ind: #e5a52a;
+
+  --m-1: #075449;
+  --m-2: #046d5f;
+  --m-3: #038777;
+  --m-4: #1ea28f;
+  --m-5: #4bbaa7;
+  --m-6: #78d1c0;
+}
+
 @theme inline {
-  --color-paper: var(--paper);
-  --color-card: var(--card);
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
   --color-muted: var(--muted);
-  --color-line: var(--line);
+  --color-grid: var(--grid);
+  --color-axis: var(--axis);
+  --color-line: var(--border);
+  --color-focus: var(--focus);
+
+  --color-safe-d: var(--r-safe-d);
+  --color-likely-d: var(--r-likely-d);
+  --color-lean-d: var(--r-lean-d);
+  --color-toss: var(--r-toss);
+  --color-lean-r: var(--r-lean-r);
+  --color-likely-r: var(--r-likely-r);
+  --color-safe-r: var(--r-safe-r);
 
   --color-dem: var(--dem);
-  --color-dem-lean: var(--dem-lean);
-  --color-tossup: var(--tossup);
-  --color-rep-lean: var(--rep-lean);
   --color-rep: var(--rep);
+  --color-ind: var(--ind);
+
+  --color-m-1: var(--m-1);
+  --color-m-2: var(--m-2);
+  --color-m-3: var(--m-3);
+  --color-m-4: var(--m-4);
+  --color-m-5: var(--m-5);
+  --color-m-6: var(--m-6);
+
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-serious: var(--serious);
+  --color-critical: var(--critical);
 
   --font-sans: var(--font-inter);
   --font-serif: var(--font-newsreader);
 }
 
+html {
+  background: var(--page);
+}
+
 body {
-  background: var(--paper);
+  background: var(--page);
   color: var(--ink);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 /* Thin gaps that make a solid bar read as individual seats. */
 .seat-texture {
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0 5px,
-    var(--paper) 5px 6px
-  );
+  background-image: repeating-linear-gradient(90deg, transparent 0 5px, var(--surface) 5px 6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -44,3 +44,7 @@ next-env.d.ts
 /data/raw/
 __pycache__/
 .venv/
+
+# generated from data/clean by scripts/build-data.mjs
+/src/generated/
+/public/data/

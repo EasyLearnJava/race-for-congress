@@ -1,0 +1,154 @@
+{
+  "generated": "2026-10-11",
+  "national_2024": {
+    "harris": 74725325,
+    "trump": 77282962,
+    "total": 154680126,
+    "margin": -1.65,
+    "note": "Sum of The Downballot's district results; margin is Democratic minus Republican share, in points."
+  },
+  "counts": {
+    "house_races": 435,
+    "senate_races": 35,
+    "house_rated": 146,
+    "ratings": 1810
+  },
+  "sources": {
+    "downballot_hexmap": {
+      "license": "CC BY 4.0",
+      "name": "Congressional District Hexmap v3.2 (2026) by Daniel Donner for The Downballot",
+      "retrieved": "2026-10-11",
+      "url": "https://the-db.co/maps"
+    },
+    "downballot_presidential": {
+      "license": "Free to use with credit to The Downballot",
+      "name": "The Downballot: 2020 & 2024 presidential results for congressional districts used in the 2026 elections",
+      "retrieved": "2026-10-11",
+      "url": "https://the-db.co/presbycd"
+    },
+    "downballot_presidential_2024_lines": {
+      "license": "Free to use with credit to The Downballot",
+      "name": "The Downballot: 2020 & 2024 presidential results for congressional districts used in the 2024 elections",
+      "retrieved": "2026-10-11",
+      "sheet": "https://docs.google.com/spreadsheets/d/1ng1i_Dm_RMDnEvauH44pgE6JCUsapcuu8F2pCfeLWFo/edit?gid=1491069057",
+      "url": "https://the-db.co/presbycd"
+    },
+    "fec_candidates": {
+      "files": "webl26.zip, cn26.zip, candidate_summary_2026.csv",
+      "license": "Public domain (U.S. government data). 52 U.S.C. 30111(a)(4) bars using individual contributors' names to solicit contributions or for commercial purposes; only candidate and committee totals are used.",
+      "name": "Federal Election Commission: House and Senate current campaigns, candidate master and candidate summary (2025-2026)",
+      "retrieved": "2026-10-11",
+      "url": "https://www.fec.gov/data/browse-data/?tab=bulk-data"
+    },
+    "fec_independent_expenditures": {
+      "as_of": "2026-10-11",
+      "license": "Public domain (U.S. government data). 52 U.S.C. 30111(a)(4) bars using individual contributors' names to solicit contributions or for commercial purposes; only candidate and committee totals are used.",
+      "name": "Federal Election Commission: independent expenditures from 24- and 48-hour reports (2025-2026)",
+      "retrieved": "2026-10-11",
+      "url": "https://www.fec.gov/files/bulk-downloads/2026/independent_expenditure_2026.csv"
+    },
+    "wikipedia_crossover_seats": {
+      "license": "CC BY-SA 4.0",
+      "name": "Wikipedia: 2026 United States House of Representatives elections, crossover seats",
+      "retrieved": "2026-10-11",
+      "revision": 1379443446,
+      "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections#Crossover_seats"
+    },
+    "wikipedia_generic_ballot": {
+      "credit": "Polling averages by Decision Desk HQ, FiftyPlusOne, NBC News, RealClearPolitics, Silver Bulletin; credit each aggregator by name",
+      "license": "CC BY-SA 4.0",
+      "name": "Wikipedia: 2026 United States House of Representatives elections, 'Generic congressional ballot aggregate polls' table",
+      "retrieved": "2026-10-11",
+      "revision": 1379443446,
+      "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections#Generic_congressional_ballot_aggregate_polls"
+    },
+    "wikipedia_house": {
+      "license": "CC BY-SA 4.0",
+      "name": "Wikipedia: 2026 United States House of Representatives elections",
+      "retrieved": "2026-10-11",
+      "revision": 1379443446,
+      "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections"
+    },
+    "wikipedia_house_ratings": {
+      "license": "CC BY-SA 4.0",
+      "name": "Wikipedia: 2026 United States House of Representatives election ratings",
+      "retrieved": "2026-10-11",
+      "revision": 1379351503,
+      "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_election_ratings"
+    },
+    "wikipedia_redistricting": {
+      "definition": "Competitive seats are defined as seats won by less than 10 points by their respective party in 2024",
+      "license": "CC BY-SA 4.0",
+      "name": "Wikipedia: 2026 United States House of Representatives elections, mid-decade redistricting summary",
+      "retrieved": "2026-10-11",
+      "revision": 1379443446,
+      "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections#Mid-decade_redistricting_changes"
+    },
+    "wikipedia_senate": {
+      "license": "CC BY-SA 4.0",
+      "name": "Wikipedia: 2026 United States Senate elections",
+      "retrieved": "2026-10-11",
+      "revision": 1379717073,
+      "url": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections"
+    },
+    "wikipedia_senate_composition": {
+      "license": "CC BY-SA 4.0",
+      "name": "Wikipedia: 2026 United States Senate elections (seat summary table, seat map, infobox)",
+      "retrieved": "2026-10-11",
+      "revision": 1379717073,
+      "url": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections#Summary_results"
+    }
+  },
+  "environment": {
+    "margin": 8.44,
+    "as_of": "2026-10-09",
+    "n_sources": 5,
+    "sources": [
+      "Decision Desk HQ",
+      "FiftyPlusOne",
+      "NBC News",
+      "RealClearPolitics",
+      "Silver Bulletin"
+    ],
+    "oldest": "2026-10-09",
+    "min_margin": 7.8,
+    "max_margin": 9.0,
+    "by_source": {
+      "Decision Desk HQ": 8.5,
+      "FiftyPlusOne": 7.8,
+      "NBC News": 9.0,
+      "RealClearPolitics": 7.9,
+      "Silver Bulletin": 9.0
+    }
+  },
+  "senate_composition": {
+    "not_up": {
+      "D": 32,
+      "R": 31,
+      "I_D": 2,
+      "other": 0
+    },
+    "current": {
+      "D": 45,
+      "R": 53,
+      "I_D": 2,
+      "other": 0
+    },
+    "vice_president_party": "R",
+    "notes": [
+      "Counts come from the 'Seats' summary table (rows 'Before these elections' = current, 'Not up', 'Up'): Before: D 45, I 2, R 53, other 0, total 100; Not up: D 32, I 2, R 31, other 0, total 65; Up: D 13, I 0, R 22, other 0, total 35.",
+      "The seat-map key reads 'I# Independent, caucusing with Democrats', so the 2 independents count as I_D.",
+      "Vice president: JD Vance (R), from the page: \"Republican JD Vance won with 53.03% of the vote in 2022, but resigned on January 10, 2025, to become Vice President of the United States.\"",
+      "Majority rule from the page: \"requires 51 seats or 50 seats with control of the vice presidency\".",
+      "races file: 35 seats up, incumbents D 13, R 22, independent 0; no independent senator is up in 2026.",
+      "Democratic caucus (D + I_D) holds 34 seats not up and needs 17 of the 35 races for 51; Republicans hold 31 and need 19 for 50."
+    ]
+  },
+  "money": {
+    "matched_nominees": 1069,
+    "unmatched_nominees": 44,
+    "latest_coverage": "2026-09-30",
+    "outside_races": 292
+  },
+  "warnings": []
+}

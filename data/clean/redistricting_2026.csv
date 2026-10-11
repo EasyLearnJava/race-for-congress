@@ -1,0 +1,10 @@
+state,seats,statewide_margin_24,held_D_2024,held_R_2024,old_lean_D_seats,old_lean_R_seats,new_lean_D_seats,new_lean_R_seats,net_change_for_D,net_change_vs_held_for_D,old_even_D_seats,old_even_R_seats,new_even_D_seats,new_even_R_seats,net_change_for_D_even,old_swing_seats,new_swing_seats
+AL,7,-30.59,2,5,2,5,1,6,-1,-1,2,5,1,6,-1,0,0
+CA,52,20.14,43,9,41,11,47,5,6,4,41,11,47,5,6,8,2
+FL,28,-13.1,8,20,8,20,4,24,-4,-4,8,20,4,24,-4,1,0
+LA,6,-22.01,2,4,2,4,1,5,-1,-1,2,4,1,5,-1,0,0
+NC,14,-3.22,4,10,3,11,3,11,0,-1,3,11,3,11,0,1,0
+OH,15,-11.21,5,10,4,11,3,12,-1,-2,4,11,3,12,-1,2,2
+TN,9,-29.72,1,8,1,8,0,9,-1,-1,1,8,0,9,-1,0,0
+TX,38,-13.69,13,25,11,27,8,30,-3,-5,11,27,8,30,-3,1,0
+UT,4,-21.59,0,4,0,4,1,3,1,1,0,4,1,3,1,0,0
