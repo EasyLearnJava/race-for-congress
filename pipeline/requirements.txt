@@ -1,0 +1,3 @@
+pandas>=2.2
+pandera>=0.20
+requests>=2.32

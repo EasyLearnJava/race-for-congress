@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Party colors share the same OKLCH lightness so neither side
+ * looks "heavier" than the other; toss-up is a neutral sand, never purple.
+ */
+:root {
+  --paper: oklch(0.975 0.006 85);
+  --card: oklch(0.995 0.002 85);
+  --ink: oklch(0.2 0.012 260);
+  --muted: oklch(0.47 0.015 260);
+  --line: oklch(0.9 0.008 85);
+
+  --dem: oklch(0.55 0.15 255);
+  --dem-lean: oklch(0.76 0.08 255);
+  --tossup: oklch(0.84 0.035 85);
+  --rep-lean: oklch(0.76 0.08 25);
+  --rep: oklch(0.55 0.17 25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: oklch(0.17 0.01 260);
+    --card: oklch(0.21 0.012 260);
+    --ink: oklch(0.94 0.006 85);
+    --muted: oklch(0.7 0.012 260);
+    --line: oklch(0.3 0.012 260);
+
+    --dem: oklch(0.66 0.14 255);
+    --dem-lean: oklch(0.46 0.08 255);
+    --tossup: oklch(0.42 0.025 85);
+    --rep-lean: oklch(0.46 0.08 25);
+    --rep: oklch(0.66 0.16 25);
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+
+  --color-dem: var(--dem);
+  --color-dem-lean: var(--dem-lean);
+  --color-tossup: var(--tossup);
+  --color-rep-lean: var(--rep-lean);
+  --color-rep: var(--rep);
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-newsreader);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Thin gaps that make a solid bar read as individual seats. */
+.seat-texture {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 5px,
+    var(--paper) 5px 6px
+  );
+}
