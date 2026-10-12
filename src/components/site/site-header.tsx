@@ -7,7 +7,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-page/90 backdrop-blur supports-[backdrop-filter]:bg-page/75">
+    <header className="site-header material sticky top-0 z-30">
       <div className="relative mx-auto flex h-14 w-full max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-baseline gap-2" aria-label="218 Race for Congress, home">
           <span className="font-serif text-2xl leading-none font-bold tracking-tight">218</span>

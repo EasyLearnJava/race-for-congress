@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { useScenario } from "@/components/scenario/scenario";
+import { usePresence } from "@/lib/use-presence";
 
 export const NAV = [
   { href: "/", label: "Overview" },
@@ -28,6 +29,7 @@ export function MainNav() {
   const pathname = usePathname();
   const { href } = useScenario();
   const [open, setOpen] = useState(false);
+  const menu = usePresence(open);
 
   const links = (onClick?: () => void) =>
     NAV.map((item) => {
@@ -38,7 +40,7 @@ export function MainNav() {
           href={item.href === "/data" ? item.href : href(item.href)}
           onClick={onClick}
           aria-current={active ? "page" : undefined}
-          className={`rounded-md px-2.5 py-1.5 text-sm whitespace-nowrap transition-colors ${
+          className={`press rounded-md px-2.5 py-1.5 text-sm whitespace-nowrap transition-colors ${
             active ? "bg-surface-2 font-semibold text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink"
           }`}
         >
@@ -62,11 +64,15 @@ export function MainNav() {
         >
           {open ? "Close" : "Menu"}
         </button>
-        {open && (
+        {menu.mounted && (
+          // Grows from the Menu button (top right) and returns to it.
           <nav
             id="mobile-nav"
             aria-label="Main"
-            className="absolute inset-x-0 top-full z-40 grid grid-cols-2 gap-1 border-b border-line bg-surface p-3 shadow-lg sm:grid-cols-3"
+            data-state={menu.state}
+            inert={!open}
+            style={{ "--origin": "top right" } as CSSProperties}
+            className="popover absolute inset-x-0 top-full z-40 grid grid-cols-2 gap-1 border-b border-line bg-surface p-3 shadow-lg sm:grid-cols-3"
           >
             {links(() => setOpen(false))}
           </nav>

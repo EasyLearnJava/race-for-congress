@@ -189,16 +189,194 @@ body {
   outline-offset: 2px;
 }
 
+/*
+ * Interface feel (.claude/skills/apple-design). Motion uses a critically damped spring
+ * (damping 1.0, no overshoot): this site has no momentum gestures, so nothing bounces.
+ * A critically damped curve has the same shape at any speed; only the duration changes.
+ */
+:root {
+  --ease-spring: linear(0 0%, 0.0575 4.2%, 0.1804 8.3%, 0.3209 12.5%, 0.4553 16.7%, 0.5731 20.8%, 0.6712 25%, 0.7502 29.2%, 0.8123 33.3%, 0.8602 37.5%, 0.8967 41.7%, 0.9241 45.8%, 0.9445 50%, 0.9597 54.2%, 0.9708 58.3%, 0.9789 62.5%, 0.9848 66.7%, 0.9891 70.8%, 0.9922 75%, 0.9945 79.2%, 0.996 83.3%, 0.9972 87.5%, 0.998 91.7%, 0.9986 95.8%, 1 100%);
+  --spring-fast: 440ms; /* response 0.3 s: menus, popovers */
+  --spring: 590ms; /* response 0.4 s: cards, larger surfaces */
+}
+
+/* Typography: optical sizes come from the fonts' opsz axes; balanced headlines. */
+html {
+  font-optical-sizing: auto;
+  -webkit-text-size-adjust: 100%;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+/* Response: feedback on press, not on release, and no tap delay. */
+button,
+summary,
+[role="button"],
+.press {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+:where(button:not(:disabled), summary, .press):active {
+  transform: scale(0.97);
+  transition: transform 100ms ease-out;
+}
+
+/*
+ * Materials: the sticky chrome is a translucent layer content scrolls under. Instead of a hard
+ * divider, a soft edge appears only once content is actually beneath it (scroll-driven where
+ * supported, a hairline elsewhere).
+ */
+/* Used on sticky bars (sticky already anchors the edge below; no position here, or it would win
+   over Tailwind's layered `sticky` utility). */
+.material {
+  background: color-mix(in oklab, var(--page) 85%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+.material::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 12px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, color-mix(in oklab, var(--ink) 9%, transparent), transparent);
+  opacity: 0;
+}
+@supports (animation-timeline: scroll()) {
+  .material::after {
+    animation: scroll-edge linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 48px;
+  }
+}
+@supports not (animation-timeline: scroll()) {
+  .material::after {
+    height: 1px;
+    background: var(--border);
+    opacity: 1;
+  }
+}
+@keyframes scroll-edge {
+  to {
+    opacity: 1;
+  }
+}
+/* Only the lowest bar casts the edge: when the scenario bar is showing, the header doesn't. */
+body:has(.scenario-bar) .site-header::after {
+  display: none;
+}
+.scenario-bar {
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--ink) 6%, transparent);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    background: var(--page);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .material {
+    background: var(--page);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--ink);
+  }
+  .material::after {
+    display: none;
+  }
+}
+
+/*
+ * Popovers and dialogs materialize from their trigger and leave the way they came. These are
+ * transitions (not keyframes), so closing mid-opening reverses from the current value.
+ */
+.popover {
+  transform-origin: var(--origin, top center);
+  transition:
+    opacity var(--spring-fast) var(--ease-spring),
+    transform var(--spring-fast) var(--ease-spring),
+    filter var(--spring-fast) var(--ease-spring);
+}
+.popover[data-state="closed"] {
+  opacity: 0;
+  transform: scale(0.96) translateY(-4px);
+  filter: blur(4px);
+  pointer-events: none;
+}
+.scrim {
+  transition: opacity var(--spring-fast) var(--ease-spring);
+}
+.scrim[data-state="closed"] {
+  opacity: 0;
+}
+
+/* Make your call: the next card arrives from the side it comes from (--dir: 1 next, -1 back). */
+.card-enter {
+  animation: card-enter var(--spring) var(--ease-spring) both;
+}
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * 24px));
+  }
+}
+
+/* A theme switch eases instead of flashing (the class is set for one transition). */
+html.theme-easing,
+html.theme-easing * {
+  transition:
+    background-color 250ms ease,
+    color 250ms ease,
+    border-color 250ms ease,
+    fill 250ms ease !important;
+}
+
 /* Thin gaps that make a solid bar read as individual seats. */
 .seat-texture {
   background-image: repeating-linear-gradient(90deg, transparent 0 5px, var(--surface) 5px 6px);
 }
 
+/*
+ * Reduced motion is gentler feedback, not none: no movement or scaling, but surfaces still
+ * cross-fade briefly so changes stay understandable.
+ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  :where(button:not(:disabled), summary, .press):active {
+    transform: none;
+  }
+  .popover,
+  .popover[data-state="closed"],
+  .card-enter {
+    transform: none !important;
+    filter: none !important;
+  }
+  .popover,
+  .scrim {
+    transition: opacity 160ms ease !important;
+  }
+  .card-enter {
+    animation: card-fade 160ms ease both !important;
+  }
+  html.theme-easing,
+  html.theme-easing * {
+    transition: none !important;
+  }
+}
+@keyframes card-fade {
+  from {
+    opacity: 0;
   }
 }

@@ -3,9 +3,10 @@
 // Global search (Ctrl/Cmd+K or "/"): districts, candidates, states and Senate races.
 // The index is a small static JSON file, fetched the first time the dialog opens.
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { markNavigationSource } from "@/lib/analytics";
+import { usePresence } from "@/lib/use-presence";
 
 interface Entry {
   kind: "State" | "Senate" | "House";
@@ -34,6 +35,8 @@ function loadIndex(): Promise<Entry[]> {
 
 export function SearchButton() {
   const [open, setOpen] = useState(false);
+  const dialog = usePresence(open);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -50,6 +53,7 @@ export function SearchButton() {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         className="inline-flex h-8 items-center gap-2 rounded-md border border-line px-2.5 text-xs text-ink-2 hover:bg-surface-2 hover:text-ink"
@@ -62,12 +66,20 @@ export function SearchButton() {
         <span className="hidden md:inline">Search</span>
         <kbd className="hidden rounded border border-line px-1 text-[10px] text-muted md:inline">Ctrl K</kbd>
       </button>
-      {open && <SearchDialog onClose={() => setOpen(false)} />}
+      {dialog.mounted && (
+        <SearchDialog
+          state={dialog.state}
+          onClose={() => {
+            setOpen(false);
+            triggerRef.current?.focus();
+          }}
+        />
+      )}
     </>
   );
 }
 
-function SearchDialog({ onClose }: { onClose: () => void }) {
+function SearchDialog({ state, onClose }: { state: "open" | "closed"; onClose: () => void }) {
   const router = useRouter();
   const [index, setIndex] = useState<Entry[] | null>(null);
   const [query, setQuery] = useState("");
@@ -106,12 +118,19 @@ function SearchDialog({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 pt-[12vh]" onClick={onClose}>
+    // A modal task: the page dims behind it, and the panel grows from the top where search lives.
+    <div
+      data-state={state}
+      className="scrim fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 pt-[12vh]"
+      onClick={onClose}
+    >
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Search"
-        className="w-full max-w-xl overflow-hidden rounded-xl border border-line bg-surface shadow-2xl"
+        data-state={state}
+        style={{ "--origin": "top center" } as CSSProperties}
+        className="popover w-full max-w-xl overflow-hidden rounded-xl border border-line bg-surface shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => {
           if (e.key === "Escape") onClose();

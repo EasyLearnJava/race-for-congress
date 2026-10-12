@@ -103,7 +103,7 @@ export function Overview({
         </p>
         <Link
           href={href("/call")}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-surface hover:opacity-90"
+          className="press mt-4 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-surface hover:opacity-90"
         >
           Make your call on the closest seats <span aria-hidden>→</span>
         </Link>

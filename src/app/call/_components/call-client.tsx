@@ -4,7 +4,7 @@
 // a live count against 218, then a result to share. Picks live only in the URL; nothing about
 // what a person picked is stored or sent anywhere.
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 
 import { SeatBar, type SeatSegment } from "@/components/charts/seat-bar";
 import { useScenario } from "@/components/scenario/scenario";
@@ -53,6 +53,8 @@ export function CallClient({ races, deck, sources }: { races: CallRace[]; deck: 
   const t = useMemo(() => tally(races, picks), [races, picks]);
 
   const [index, setIndex] = useState<number | null>(null);
+  // Which way the deck last moved (1 forward, -1 back): the next card enters from that side.
+  const [dir, setDir] = useState<1 | -1>(1);
   const [showResult, setShowResult] = useState(false);
   const firstOpen = deck.findIndex((r) => !picks.has(r.id));
   const current = index ?? (firstOpen === -1 ? deck.length : firstOpen);
@@ -75,12 +77,22 @@ export function CallClient({ races, deck, sources }: { races: CallRace[]; deck: 
       // Advance to the next seat not called yet, after this one first, then from the top.
       const after = deck.findIndex((r, i) => i > current && !next.has(r.id));
       const before = deck.findIndex((r) => !next.has(r.id));
-      setIndex(after !== -1 ? after : before !== -1 ? before : deck.length);
+      const target = after !== -1 ? after : before !== -1 ? before : deck.length;
+      setDir(target >= current ? 1 : -1);
+      setIndex(target);
     },
     [current, deck, picks, writePicks],
   );
 
-  const go = useCallback((i: number) => setIndex(Math.max(0, Math.min(deck.length - 1, i))), [deck.length]);
+  const go = useCallback(
+    (i: number) => {
+      const next = Math.max(0, Math.min(deck.length - 1, i));
+      if (next === current) return;
+      setDir(next > current ? 1 : -1);
+      setIndex(next);
+    },
+    [deck.length, current],
+  );
 
   const startOver = () => {
     writePicks(new Map());
@@ -114,7 +126,7 @@ export function CallClient({ races, deck, sources }: { races: CallRace[]; deck: 
           onStartOver={startOver}
         />
       ) : (
-        <Deck deck={deck} current={current} picks={picks} onChoose={choose} onGo={go} onFinish={() => setShowResult(true)} />
+        <Deck deck={deck} current={current} dir={dir} picks={picks} onChoose={choose} onGo={go} onFinish={() => setShowResult(true)} />
       )}
 
       <Sources sources={sources} />
@@ -164,6 +176,7 @@ function Tracker({ t, deckSize }: { t: Tally; deckSize: number }) {
 function Deck({
   deck,
   current,
+  dir,
   picks,
   onChoose,
   onGo,
@@ -171,6 +184,7 @@ function Deck({
 }: {
   deck: DeckRace[];
   current: number;
+  dir: 1 | -1;
   picks: Picks;
   onChoose: (c: Choice) => void;
   onGo: (i: number) => void;
@@ -229,72 +243,78 @@ function Deck({
         </button>
       </div>
       <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-surface-2" aria-hidden>
-        <div className="h-full rounded-full bg-ink motion-safe:transition-[width]" style={{ width: `${(called / deck.length) * 100}%` }} />
+        <div
+          className="h-full rounded-full bg-ink transition-[width] duration-(--spring) ease-(--ease-spring)"
+          style={{ width: `${(called / deck.length) * 100}%` }}
+        />
       </div>
 
-      <Card className="mx-auto max-w-2xl">
-        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-[0.12em] text-muted uppercase">
-          {districtName(race.id, race.stateName)}
-          {race.newLines && <Badge tone="info">New 2026 lines</Badge>}
-          {!race.incumbentRunning && <Badge>Open seat</Badge>}
-        </div>
-        <h2 ref={headingRef} tabIndex={-1} className="mt-1 font-serif text-4xl font-semibold tracking-tight text-ink outline-none">
-          {race.id}
-        </h2>
-        <p className="mt-1 text-sm text-ink-2">{holder}</p>
-
-        <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-          <Fact label="Forecasters">
-            <RatingChip rating={race.rating} />
-            <span className="ml-1.5 text-xs text-ink-2">median of {race.ratingCount}</span>
-          </Fact>
-          <Fact label={`Model at ${fmtMargin(params.env)}`}>
-            {p ? (
+      {/* Keyed by seat: each new card arrives from the direction the deck moved. */}
+      <div key={race.id} className="card-enter" style={{ "--dir": dir } as CSSProperties}>
+        <Card className="mx-auto max-w-2xl">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-[0.12em] text-muted uppercase">
+            {districtName(race.id, race.stateName)}
+            {race.newLines && <Badge tone="info">New 2026 lines</Badge>}
+            {!race.incumbentRunning && <Badge>Open seat</Badge>}
+          </div>
+          <h2 ref={headingRef} tabIndex={-1} className="mt-1 font-serif text-4xl font-semibold tracking-tight text-ink outline-none">
+            {race.id}
+          </h2>
+          <p className="mt-1 text-sm text-ink-2">{holder}</p>
+  
+          <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <Fact label="Forecasters">
+              <RatingChip rating={race.rating} />
+              <span className="ml-1.5 text-xs text-ink-2">median of {race.ratingCount}</span>
+            </Fact>
+            <Fact label={`Model at ${fmtMargin(params.env)}`}>
+              {p ? (
+                <span className="tabular-nums">
+                  {fmtProb(p.pWin)} D · {fmtProb(1 - p.pWin)} R
+                </span>
+              ) : (
+                "—"
+              )}
+            </Fact>
+            <Fact label="2024 president here">
+              <span className="tabular-nums">{fmtMargin(race.pres24)}</span>
+            </Fact>
+            <Fact label="Raised by nominees">
               <span className="tabular-nums">
-                {fmtProb(p.pWin)} D · {fmtProb(1 - p.pWin)} R
+                D {fmtMoney(race.raisedD)} · R {fmtMoney(race.raisedR)}
               </span>
-            ) : (
-              "—"
-            )}
-          </Fact>
-          <Fact label="2024 president here">
-            <span className="tabular-nums">{fmtMargin(race.pres24)}</span>
-          </Fact>
-          <Fact label="Raised by nominees">
-            <span className="tabular-nums">
-              D {fmtMoney(race.raisedD)} · R {fmtMoney(race.raisedR)}
-            </span>
-          </Fact>
-        </dl>
-
-        <div className="mt-5 grid grid-cols-3 gap-2" role="group" aria-label={`Call ${race.id}`}>
-          <ChoiceButton choice="D" name={race.dem} picked={picked} onChoose={onChoose} />
-          <ChoiceButton choice="T" picked={picked} onChoose={onChoose} />
-          <ChoiceButton choice="R" name={race.rep} picked={picked} onChoose={onChoose} />
-        </div>
-
-        <div className="mt-4 flex items-center justify-between gap-2 text-sm">
-          <button
-            type="button"
-            onClick={() => onGo(current - 1)}
-            disabled={current === 0}
-            className="rounded-lg px-2 py-1.5 font-medium text-ink-2 hover:bg-surface-2 disabled:opacity-40"
-          >
-            <span aria-hidden>←</span> Back
-          </button>
-          <Link href={href(houseHref(race.id))} className="text-xs font-semibold text-ink-2 underline underline-offset-2">
-            Full race page
-          </Link>
-          <button
-            type="button"
-            onClick={() => onGo(current + 1)}
-            disabled={current >= deck.length - 1}
-            className="rounded-lg px-2 py-1.5 font-medium text-ink-2 hover:bg-surface-2 disabled:opacity-40"
-          >
-            Skip <span aria-hidden>→</span>
-          </button>
-        </div>
-      </Card>
+            </Fact>
+          </dl>
+  
+          <div className="mt-5 grid grid-cols-3 gap-2" role="group" aria-label={`Call ${race.id}`}>
+            <ChoiceButton choice="D" name={race.dem} picked={picked} onChoose={onChoose} />
+            <ChoiceButton choice="T" picked={picked} onChoose={onChoose} />
+            <ChoiceButton choice="R" name={race.rep} picked={picked} onChoose={onChoose} />
+          </div>
+  
+          <div className="mt-4 flex items-center justify-between gap-2 text-sm">
+            <button
+              type="button"
+              onClick={() => onGo(current - 1)}
+              disabled={current === 0}
+              className="rounded-lg px-2 py-1.5 font-medium text-ink-2 hover:bg-surface-2 disabled:opacity-40"
+            >
+              <span aria-hidden>←</span> Back
+            </button>
+            <Link href={href(houseHref(race.id))} className="text-xs font-semibold text-ink-2 underline underline-offset-2">
+              Full race page
+            </Link>
+            <button
+              type="button"
+              onClick={() => onGo(current + 1)}
+              disabled={current >= deck.length - 1}
+              className="rounded-lg px-2 py-1.5 font-medium text-ink-2 hover:bg-surface-2 disabled:opacity-40"
+            >
+              Skip <span aria-hidden>→</span>
+            </button>
+          </div>
+        </Card>
+      </div>
       <p className="mx-auto mt-3 max-w-2xl text-center text-xs text-muted">
         Keyboard: D, T or R (or 1, 2, 3) to call a seat; arrow keys to move between seats.
       </p>

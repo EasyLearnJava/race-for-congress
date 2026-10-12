@@ -12,14 +12,17 @@ import { baselineEnvironment, meta } from "@/lib/data";
 import { fmtDate, fmtMargin } from "@/lib/format";
 import "./globals.css";
 
+// Optical-size axes: letterforms adapt to their size (tighter display cuts, sturdier small text).
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  axes: ["opsz"],
 });
 
 const newsreader = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {

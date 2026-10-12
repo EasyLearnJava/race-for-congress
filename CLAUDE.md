@@ -45,6 +45,7 @@ A nonpartisan, interactive simulator for the 2026 US midterms: move the national
 - Use the color tokens in `src/app/globals.css` (`dem`, `dem-lean`, `tossup`, `rep-lean`, `rep`, `paper`, `card`, `ink`, `muted`, `line`). Never hard-code party colors.
 - Democrats always on the left in blue, Republicans on the right in red.
 - Fonts: Newsreader (`font-serif`) for headlines, Inter (`font-sans`) for the interface; `tabular-nums` for changing numbers.
+- Interface feel follows `.claude/skills/apple-design` (where it conflicts with these rules, these win: keep the fonts, and no swipe gestures for party picks). Use the primitives in `globals.css`: `--ease-spring` with `--spring` / `--spring-fast` (critically damped, no bounce), `.material` for sticky chrome, `.popover` + `.scrim` with `usePresence` for overlays, `.press` on button-like links.
 
 **Neutrality**
 - Same templates and wording for both parties, and no loaded adjectives.

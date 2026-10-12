@@ -33,8 +33,12 @@ function apply(theme: Theme) {
   } catch {
     // storage unavailable (private mode): the choice lasts for this page only
   }
-  if (theme === "system") delete document.documentElement.dataset.theme;
-  else document.documentElement.dataset.theme = theme;
+  // Ease the switch instead of flashing the whole page (globals.css, html.theme-easing).
+  const root = document.documentElement;
+  root.classList.add("theme-easing");
+  window.setTimeout(() => root.classList.remove("theme-easing"), 300);
+  if (theme === "system") delete root.dataset.theme;
+  else root.dataset.theme = theme;
   window.dispatchEvent(new Event(EVENT));
 }
 
