@@ -4,6 +4,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { csvParse } from "d3-dsv";
+import * as topojson from "topojson-client";
 
 import { allFacts } from "./summaries/facts.mjs";
 
@@ -218,6 +219,37 @@ for (const file of [
 }
 writeFileSync(join(publicData, "house.json"), JSON.stringify(datasets.house ?? []));
 writeFileSync(join(publicData, "senate.json"), JSON.stringify(datasets.senate ?? []));
+
+// Geographic state map (US Census Bureau shapes via us-atlas, already in Albers USA with Alaska
+// and Hawaii inset): one SVG path per state plus a label point on its largest piece.
+const atlas = JSON.parse(readFileSync(join(root, "node_modules", "us-atlas", "states-albers-10m.json"), "utf8"));
+const POSTAL_BY_NAME = Object.fromEntries((datasets.house ?? []).map((r) => [r.stateName, r.state]));
+const ringArea = (ring) => ring.reduce((s, [x0, y0], i) => s + x0 * ring[(i + 1) % ring.length][1] - ring[(i + 1) % ring.length][0] * y0, 0) / 2;
+const centroid = (ring) => {
+  const a = ringArea(ring);
+  let cx = 0;
+  let cy = 0;
+  for (let i = 0; i < ring.length; i++) {
+    const [x0, y0] = ring[i];
+    const [x1, y1] = ring[(i + 1) % ring.length];
+    const k = x0 * y1 - x1 * y0;
+    cx += (x0 + x1) * k;
+    cy += (y0 + y1) * k;
+  }
+  return [cx / (6 * a), cy / (6 * a)];
+};
+const usStates = topojson
+  .feature(atlas, atlas.objects.states)
+  .features.map((f) => {
+    const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+    const d = polys.map((poly) => poly.map((ring) => `M${ring.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join("L")}Z`).join("")).join("");
+    const largest = polys.map((p) => p[0]).sort((a, b) => Math.abs(ringArea(b)) - Math.abs(ringArea(a)))[0];
+    const [cx, cy] = centroid(largest);
+    const area = polys.reduce((s, p) => s + Math.abs(ringArea(p[0])), 0);
+    return { postal: POSTAL_BY_NAME[f.properties.name] ?? (f.properties.name === "District of Columbia" ? "DC" : null), name: f.properties.name, d, cx: +cx.toFixed(1), cy: +cy.toFixed(1), area: Math.round(area) };
+  })
+  .filter((s) => s.postal);
+writeFileSync(join(generated, "usStates.json"), JSON.stringify(usStates));
 
 // Search index for the header search box (fetched on demand).
 const people = (...names) => names.flatMap((n) => (n ? n.split(/ \/ |; /).map((s) => s.replace(/ \([^)]*\)$/, "")) : [])).filter(Boolean);

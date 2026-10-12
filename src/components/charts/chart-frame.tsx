@@ -5,6 +5,7 @@
 // chart) and a CSV download of exactly the data plotted.
 import { useState, type ReactNode } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
 import { downloadCsv, toCsv, type CsvColumn } from "@/lib/csv";
 import { useMeasure } from "./use-measure";
 
@@ -48,23 +49,30 @@ export function ChartFrame({
           <div className="text-sm font-semibold text-ink">{title}</div>
           {subtitle && <div className="mt-0.5 text-xs leading-5 text-ink-2">{subtitle}</div>}
         </div>
-        <div className="flex shrink-0 items-center gap-1">
+        {/* Wraps on narrow screens: a chart's own toggle plus Chart/Table and CSV can exceed 360px. */}
+        <div className="flex max-w-full min-w-0 flex-wrap items-center gap-1">
           {actions}
           {table && (
             <>
-              <button
-                type="button"
-                onClick={() => setView(view === "chart" ? "table" : "chart")}
-                className="rounded-md px-2 py-1 text-xs font-medium text-ink-2 hover:bg-surface-2 hover:text-ink"
-                aria-pressed={view === "table"}
-              >
-                {view === "chart" ? "Table" : "Chart"}
-              </button>
+              <Segmented
+                label="Show as"
+                size="xs"
+                value={view}
+                onChange={setView}
+                options={[
+                  { value: "chart", label: "Chart" },
+                  { value: "table", label: "Table" },
+                ]}
+              />
               <button
                 type="button"
                 onClick={() => downloadCsv(csvName ?? "data", toCsv(table.columns, table.rows))}
-                className="rounded-md px-2 py-1 text-xs font-medium text-ink-2 hover:bg-surface-2 hover:text-ink"
+                className="inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-[11px] font-medium text-ink-2 hover:bg-surface-2 hover:text-ink"
+                aria-label="Download CSV"
               >
+                <svg aria-hidden width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 2v8m0 0-3-3m3 3 3-3M3 12.5h10" />
+                </svg>
                 CSV
               </button>
             </>

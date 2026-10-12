@@ -9,6 +9,8 @@ import { MarginBar, ProbBar } from "@/components/charts/sparkline";
 import { TipRow, TipTitle } from "@/components/charts/tooltip";
 import { useScenario } from "@/components/scenario/scenario";
 import { Card, RatingChip, SectionTitle, Stat } from "@/components/ui/primitives";
+import { Segmented } from "@/components/ui/segmented";
+import { Ticker } from "@/components/ui/ticker";
 import { HOUSE_MAJORITY, HOUSE_SEATS } from "@/lib/data/states";
 import type { HexMap as HexMapData, HouseRace, Meta, RatingLabel, SenateRace } from "@/lib/data/types";
 import { fmtDate, fmtMargin, fmtProb } from "@/lib/format";
@@ -112,33 +114,42 @@ export function Overview({
       <section aria-label="Headline numbers" className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Stat
           label="Democrats win the House"
-          value={fmtProb(houseOutlook.pDemMajority)}
+          value={<Ticker value={houseOutlook.pDemMajority} format={fmtProb} />}
           detail={`Republicans ${fmtProb(1 - houseOutlook.pDemMajority)}`}
           accent="var(--dem)"
           href={href("/simulator")}
         />
         <Stat
           label="House seats, D–R"
-          value={`${expectedD}–${HOUSE_SEATS - expectedD}`}
+          value={
+            <>
+              <Ticker value={expectedD} format={(n) => String(Math.round(n))} />–<Ticker value={HOUSE_SEATS - expectedD} format={(n) => String(Math.round(n))} />
+            </>
+          }
           detail={`Democrats' 80% range: ${houseOutlook.low}–${houseOutlook.high}`}
           href={href("/house")}
         />
         <Stat
           label="Finish line"
-          value={houseOutlook.finishLine == null ? "—" : fmtMargin(houseOutlook.finishLine)}
+          value={houseOutlook.finishLine == null ? "—" : <Ticker value={houseOutlook.finishLine} format={(n) => fmtMargin(n)} />}
           detail="National vote Democrats need to be favored"
           href={href("/simulator")}
         />
         <Stat
           label="Democrats win the Senate"
-          value={fmtProb(senateOutlook.pDemControl)}
+          value={<Ticker value={senateOutlook.pDemControl} format={fmtProb} />}
           detail={`Republicans ${fmtProb(senateOutlook.pRepControl)}`}
           accent="var(--dem)"
           href={href("/senate")}
         />
         <Stat
           label="Senate seats, D–R"
-          value={`${Math.round(senateOutlook.expectedDem)}–${Math.round(senateOutlook.expectedRep)}`}
+          value={
+            <>
+              <Ticker value={senateOutlook.expectedDem} format={(n) => String(Math.round(n))} />–
+              <Ticker value={senateOutlook.expectedRep} format={(n) => String(Math.round(n))} />
+            </>
+          }
           detail="Democratic caucus needs 51 for control"
           href={href("/senate")}
         />
@@ -162,37 +173,25 @@ export function Overview({
                 Click a segment or a district to drill down.
               </p>
             </div>
-            <div role="group" aria-label="Color seats by" className="inline-flex rounded-lg border border-line p-0.5 text-xs">
-              {(["model", "forecasters"] as const).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  aria-pressed={mode === m}
-                  onClick={() => setMode(m)}
-                  className={`rounded-md px-2.5 py-1 font-medium ${mode === m ? "bg-ink text-surface" : "text-ink-2 hover:text-ink"}`}
-                >
-                  {m === "model" ? "This model" : "Forecasters"}
-                </button>
-              ))}
-            </div>
+            <Segmented
+              label="Color seats by"
+              value={mode}
+              onChange={setMode}
+              options={[
+                { value: "model", label: "This model" },
+                { value: "forecasters", label: "Forecasters" },
+              ]}
+            />
           </div>
           <SeatBar
             segments={segments}
             majority={HOUSE_MAJORITY}
             total={HOUSE_SEATS}
             majorityLabel="218 for a majority"
-            leftLabel={
-              <span>
-                <span className="font-semibold text-ink">{segments.slice(0, 3).reduce((s, x) => s + x.count, 0)}</span>{" "}
-                <span className="text-ink-2">lean Democratic</span>
-              </span>
-            }
-            rightLabel={
-              <span>
-                <span className="font-semibold text-ink">{segments.slice(4).reduce((s, x) => s + x.count, 0)}</span>{" "}
-                <span className="text-ink-2">lean Republican</span>
-              </span>
-            }
+            ends={{
+              left: { label: "Democrats", value: segments.slice(0, 3).reduce((s, x) => s + x.count, 0), color: "var(--r-safe-d)", detail: "Safe, Likely or Lean" },
+              right: { label: "Republicans", value: segments.slice(4).reduce((s, x) => s + x.count, 0), color: "var(--r-safe-r)", detail: "Safe, Likely or Lean" },
+            }}
           />
           <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-2">
             {RATING_ORDER.map((r) => (
@@ -332,18 +331,10 @@ export function Overview({
           majority={51}
           total={100}
           majorityLabel="51 for Democratic control"
-          leftLabel={
-            <span>
-              <span className="font-semibold text-ink">{Math.round(senateOutlook.expectedDem)}</span>{" "}
-              <span className="text-ink-2">expected Democratic caucus</span>
-            </span>
-          }
-          rightLabel={
-            <span>
-              <span className="font-semibold text-ink">{Math.round(senateOutlook.expectedRep)}</span>{" "}
-              <span className="text-ink-2">expected Republican</span>
-            </span>
-          }
+          ends={{
+            left: { label: "Democrats", value: Math.round(senateOutlook.expectedDem), color: "var(--r-safe-d)", detail: "Expected caucus seats" },
+            right: { label: "Republicans", value: Math.round(senateOutlook.expectedRep), color: "var(--r-safe-r)", detail: "Expected seats" },
+          }}
         />
         <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {senateOutlook.projections

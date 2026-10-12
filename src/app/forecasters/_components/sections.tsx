@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useMemo, type ReactNode } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
 import { BarChart, barChartHeight, type BarRow } from "@/components/charts/bar-chart";
 import { ChartFrame, LegendItem } from "@/components/charts/chart-frame";
 import { DotStrip, dotStripHeight, type DotStripBand, type DotStripRow, type DotStripTick } from "@/components/charts/dot-strip";
@@ -36,29 +37,18 @@ const MODEL_KEY = "_model";
 const steps = (n: number) => `${signed(n, 2)} ${Math.abs(n) === 1 ? "step" : "steps"}`;
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 
-function Toggle({ pressed, onClick, children }: { pressed: boolean; onClick: () => void; children: ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={pressed}
-      onClick={onClick}
-      className={`rounded-md px-2.5 py-1 font-medium ${pressed ? "bg-ink text-surface" : "text-ink-2 hover:text-ink"}`}
-    >
-      {children}
-    </button>
-  );
-}
-
 export function ChamberToggle({ chamber, onChange }: { chamber: Chamber; onChange: (c: Chamber) => void }) {
   return (
-    <div role="group" aria-label="Chamber" className="inline-flex rounded-lg border border-line bg-surface p-0.5 text-sm">
-      <Toggle pressed={chamber === "house"} onClick={() => onChange("house")}>
-        House
-      </Toggle>
-      <Toggle pressed={chamber === "senate"} onClick={() => onChange("senate")}>
-        Senate
-      </Toggle>
-    </div>
+    <Segmented
+      label="Chamber"
+      size="md"
+      value={chamber}
+      onChange={onChange}
+      options={[
+        { value: "house", label: "House" },
+        { value: "senate", label: "Senate" },
+      ]}
+    />
   );
 }
 

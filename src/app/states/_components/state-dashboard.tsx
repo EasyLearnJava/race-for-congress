@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
 import { ChartFrame, LegendItem } from "@/components/charts/chart-frame";
 import { HexMap } from "@/components/charts/hex-map";
 import { ProbBar } from "@/components/charts/sparkline";
@@ -160,19 +161,16 @@ export function StateDashboard({
             </>
           }
           actions={
-            <div role="group" aria-label="Color districts by" className="mr-1 inline-flex rounded-lg border border-line p-0.5 text-xs">
-              {(["model", "forecasters"] as const).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  aria-pressed={mode === m}
-                  onClick={() => setMode(m)}
-                  className={`rounded-md px-2 py-1 font-medium ${mode === m ? "bg-ink text-surface" : "text-ink-2 hover:text-ink"}`}
-                >
-                  {m === "model" ? "Model" : "Forecasters"}
-                </button>
-              ))}
-            </div>
+            <Segmented
+              label="Color districts by"
+              size="xs"
+              value={mode}
+              onChange={setMode}
+              options={[
+                { value: "model", label: "Model" },
+                { value: "forecasters", label: "Forecasters" },
+              ]}
+            />
           }
           legend={RATING_ORDER.map((r) => {
             const count = races.filter((x) => categoryOf(x.id) === r).length;

@@ -6,6 +6,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
 import { BarChart, barChartHeight, type BarRow } from "@/components/charts/bar-chart";
 import { ChartFrame, LegendItem } from "@/components/charts/chart-frame";
 import { useScenario } from "@/components/scenario/scenario";
@@ -108,19 +109,13 @@ export function SenateMoney({ senate, money, outside }: { senate: SenateRace[]; 
 
   const toggle =
     modes.length > 1 ? (
-      <div role="group" aria-label="Money shown" className="inline-flex rounded-lg border border-line p-0.5 text-xs">
-        {modes.map((m) => (
-          <button
-            key={m}
-            type="button"
-            aria-pressed={mode === m}
-            onClick={() => setPicked(m)}
-            className={`rounded-md px-2.5 py-1 font-medium ${mode === m ? "bg-ink text-surface" : "text-ink-2 hover:text-ink"}`}
-          >
-            {m === "candidates" ? "Candidates" : "Outside groups"}
-          </button>
-        ))}
-      </div>
+      <Segmented
+        label="Money shown"
+        size="xs"
+        value={mode}
+        onChange={setPicked}
+        options={modes.map((m) => ({ value: m, label: m === "candidates" ? "Candidates" : "Outside groups" }))}
+      />
     ) : null;
 
   return (

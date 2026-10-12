@@ -37,33 +37,8 @@ export function challengerSide(race: MoneyRace): SideMoney | null {
   return race.challenger === "I" ? c.other : c.dem;
 }
 
-export function Segmented<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: { value: T; label: string }[];
-  onChange: (value: T) => void;
-}) {
-  return (
-    <div role="group" aria-label={label} className="inline-flex rounded-lg border border-line p-0.5 text-xs">
-      {options.map((o) => (
-        <button
-          key={o.value}
-          type="button"
-          aria-pressed={value === o.value}
-          onClick={() => onChange(o.value)}
-          className={`rounded-md px-2.5 py-1 font-medium whitespace-nowrap ${value === o.value ? "bg-ink text-surface" : "text-ink-2 hover:text-ink"}`}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
+// The site-wide sliding segmented control.
+export { Segmented } from "@/components/ui/segmented";
 
 /** A dollar gap in millions with the side ahead: "D +$2.5M", "R +$800K", "Even". */
 export function fmtGap(millions: number): string {

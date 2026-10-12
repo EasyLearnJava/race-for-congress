@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
 import { BarChart, barChartHeight, type BarRow } from "@/components/charts/bar-chart";
 import { ChartFrame, LegendItem } from "@/components/charts/chart-frame";
 import { MarginBar } from "@/components/charts/sparkline";
@@ -332,19 +333,16 @@ export function StatesIndex({
           csvName={colorBy === "net" ? "states-net-change" : "states-competitive-seats"}
           source={`Source: ratings from 10 forecasters via Wikipedia; 2024 presidential results by The Downballot; ${scenarioNote}.`}
           actions={
-            <div role="group" aria-label="Color states by" className="mr-1 inline-flex rounded-lg border border-line p-0.5 text-xs">
-              {(["net", "competitive"] as const).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  aria-pressed={colorBy === m}
-                  onClick={() => setColorBy(m === "net" ? null : m)}
-                  className={`rounded-md px-2 py-1 font-medium ${colorBy === m ? "bg-ink text-surface" : "text-ink-2 hover:text-ink"}`}
-                >
-                  {m === "net" ? "Net change" : "Competitive"}
-                </button>
-              ))}
-            </div>
+            <Segmented
+              label="Color states by"
+              size="xs"
+              value={colorBy}
+              onChange={(m) => setColorBy(m === "net" ? null : m)}
+              options={[
+                { value: "net", label: "Net change" },
+                { value: "competitive", label: "Competitive" },
+              ]}
+            />
           }
           legend={
             colorBy === "net" ? (

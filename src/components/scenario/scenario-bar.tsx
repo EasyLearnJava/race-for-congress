@@ -5,6 +5,7 @@
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
 import { track } from "@/lib/analytics";
 import { DEFAULT_PARAMS } from "@/lib/model/engine";
 import { fmtMargin } from "@/lib/format";
@@ -84,28 +85,26 @@ export function ScenarioBar() {
             </output>
           </div>
           <div className="flex w-full flex-wrap items-center gap-1.5 md:w-auto">
+            {/* Phones: just the polling average. Wider: every preset on one sliding control. */}
             <button
               type="button"
               onClick={() => set({ env: baselineEnv }, { how: "preset", surface: "bar" })}
-              className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
+              className={`rounded-full border px-2.5 py-1 text-xs font-medium sm:hidden ${
                 env === baselineEnv ? "border-ink bg-ink text-surface" : "border-line text-ink-2 hover:bg-surface-2"
               }`}
               title={baselineLabel}
             >
               Polling avg {fmtMargin(baselineEnv)}
             </button>
-            {PRESETS.map((p) => (
-              <button
-                key={p.label}
-                type="button"
-                onClick={() => set({ env: p.env }, { how: "preset", surface: "bar" })}
-                className={`hidden rounded-full border px-2.5 py-1 text-xs font-medium sm:inline-flex ${
-                  env === p.env ? "border-ink bg-ink text-surface" : "border-line text-ink-2 hover:bg-surface-2"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
+            <span className="hidden sm:contents">
+              <Segmented
+                label="National vote presets"
+                size="xs"
+                value={env === baselineEnv ? "poll" : (PRESETS.find((p) => p.env === env)?.label ?? "")}
+                onChange={(v) => set({ env: v === "poll" ? baselineEnv : PRESETS.find((p) => p.label === v)!.env }, { how: "preset", surface: "bar" })}
+                options={[{ value: "poll", label: `Polling avg ${fmtMargin(baselineEnv)}` }, ...PRESETS.map((p) => ({ value: p.label, label: p.label }))]}
+              />
+            </span>
             <button
               type="button"
               onClick={() => setOpen(!open)}

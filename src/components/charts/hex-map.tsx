@@ -102,11 +102,10 @@ export function HexMap({
                   key={d.id}
                   d={d.d}
                   data-id={d.id}
-                  fill={fill(d.id)}
-                  opacity={dim ? 0.18 : 1}
+                  style={{ fill: fill(d.id), opacity: dim ? 0.18 : undefined }}
                   stroke="var(--surface)"
                   strokeWidth={0.8 * unit}
-                  className={hrefFor ? "cursor-pointer hover:opacity-80" : undefined}
+                  className={`map-fill ${hrefFor ? "cursor-pointer hover:opacity-80" : ""}`}
                 />
               );
             })}

@@ -50,6 +50,11 @@
   --warn: #fab219;
   --serious: #ec835a;
   --critical: #d03b3b;
+
+  /* Segmented controls: a light thumb riding a recessed track (lighter thumb in dark mode). */
+  --seg-track: #ebeae5;
+  --seg-thumb: #ffffff;
+  --seg-shadow: 0 1px 2px rgba(11, 11, 11, 0.12), 0 2px 8px rgba(11, 11, 11, 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -91,6 +96,10 @@
     --m-4: #1ea28f;
     --m-5: #4bbaa7;
     --m-6: #78d1c0;
+
+    --seg-track: #242422;
+    --seg-thumb: #3b3b38;
+    --seg-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -132,6 +141,10 @@
   --m-4: #1ea28f;
   --m-5: #4bbaa7;
   --m-6: #78d1c0;
+
+  --seg-track: #242422;
+  --seg-thumb: #3b3b38;
+  --seg-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
@@ -379,4 +392,11 @@ html.theme-easing * {
   from {
     opacity: 0;
   }
+}
+
+/* Maps recolor smoothly when the scenario changes (colors fade; shapes never move). */
+.map-fill {
+  transition:
+    fill 450ms ease,
+    opacity 200ms ease;
 }

@@ -4,6 +4,7 @@
 // summary of what is active with one-click removal. Every control writes the URL.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
 import { STATES, STATE_BY_POSTAL } from "@/lib/data/states";
 import { RATING_COLOR, RATING_ORDER } from "@/lib/ratings";
 import {
@@ -223,36 +224,6 @@ function StatePicker({ selected }: { selected: string[] }) {
   );
 }
 
-function Segmented<V extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: V;
-  options: { value: V; label: string; dot?: string }[];
-  onChange: (v: V) => void;
-}) {
-  return (
-    <div role="group" aria-label={label} className="inline-flex h-8 items-center rounded-lg border border-line p-0.5 text-xs">
-      {options.map((o) => (
-        <button
-          key={o.value}
-          type="button"
-          aria-pressed={value === o.value}
-          onClick={() => onChange(o.value)}
-          className={`inline-flex h-full items-center gap-1.5 rounded-md px-2.5 font-medium whitespace-nowrap ${
-            value === o.value ? "bg-ink text-surface" : "text-ink-2 hover:text-ink"
-          }`}
-        >
-          {o.dot && <span aria-hidden className="size-2 rounded-full" style={{ background: o.dot }} />}
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function Toggle({ pressed, onClick, children }: { pressed: boolean; onClick: () => void; children: ReactNode }) {
   return (

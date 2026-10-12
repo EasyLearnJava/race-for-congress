@@ -290,7 +290,7 @@ export function StateTileMap({
       const face = (
         <>
           {/* The transparent stroke widens the hit area across half of each surrounding gap. */}
-          <rect x={t.x} y={t.y} width={s} height={s} rx={r} fill={t.fill ?? "var(--surface-2)"} stroke="transparent" strokeWidth={GAP} />
+          <rect x={t.x} y={t.y} width={s} height={s} rx={r} style={{ fill: t.fill ?? "var(--surface-2)" }} className="map-fill" stroke="transparent" strokeWidth={GAP} />
           {isSelected && s >= 8 && (
             // Ink ring plus a surface ring inside it: one of the two clears 3:1 on every fill.
             <g pointerEvents="none" fill="none">

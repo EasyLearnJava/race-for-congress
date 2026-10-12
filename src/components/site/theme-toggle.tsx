@@ -4,6 +4,8 @@
 // layout applies it before first paint so there is no flash.
 import { useSyncExternalStore } from "react";
 
+import { Segmented } from "@/components/ui/segmented";
+
 type Theme = "system" | "light" | "dark";
 const KEY = "theme";
 const EVENT = "themechange";
@@ -42,24 +44,51 @@ function apply(theme: Theme) {
   window.dispatchEvent(new Event(EVENT));
 }
 
-const NEXT: Record<Theme, Theme> = { system: "light", light: "dark", dark: "system" };
-const LABEL: Record<Theme, string> = { system: "Auto", light: "Light", dark: "Dark" };
 
+const ICON = { width: 13, height: 13, viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round" as const };
+
+/** Auto / Light / Dark as a sliding segmented control (system setting by default). */
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, read, () => "system" as Theme);
   return (
-    <button
-      type="button"
-      onClick={() => apply(NEXT[theme])}
-      className="inline-flex h-8 items-center gap-1.5 rounded-md border border-line px-2.5 text-xs font-medium text-ink-2 hover:bg-surface-2 hover:text-ink"
-      aria-label={`Theme: ${LABEL[theme]}. Switch to ${LABEL[NEXT[theme]]}`}
-    >
-      <svg aria-hidden width="14" height="14" viewBox="0 0 16 16">
-        <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor" />
-      </svg>
-      {LABEL[theme]}
-    </button>
+    <Segmented
+      label="Color theme"
+      size="xs"
+      value={theme}
+      onChange={apply}
+      className="[&>button]:px-2"
+      options={[
+        {
+          value: "system",
+          ariaLabel: "Automatic (follow the device)",
+          label: (
+            <svg aria-hidden {...ICON}>
+              <circle cx="8" cy="8" r="6" />
+              <path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor" />
+            </svg>
+          ),
+        },
+        {
+          value: "light",
+          ariaLabel: "Light",
+          label: (
+            <svg aria-hidden {...ICON}>
+              <circle cx="8" cy="8" r="3" />
+              <path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" />
+            </svg>
+          ),
+        },
+        {
+          value: "dark",
+          ariaLabel: "Dark",
+          label: (
+            <svg aria-hidden {...ICON}>
+              <path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z" />
+            </svg>
+          ),
+        },
+      ]}
+    />
   );
 }
 

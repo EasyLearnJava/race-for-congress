@@ -8,7 +8,7 @@ import { useMemo, type MouseEvent } from "react";
 
 import { ChartFrame, LegendItem } from "@/components/charts/chart-frame";
 import { SeatBar, type SeatSegment } from "@/components/charts/seat-bar";
-import { StateTileMap, tileMapHeight } from "@/components/charts/tile-map";
+import { US_MAP_CREDIT, UsStateMap } from "@/components/charts/us-map";
 import { TipRow, TipTitle } from "@/components/charts/tooltip";
 import { SensitivityChart, type CurveSpec } from "@/components/model/sensitivity";
 import { useScenario } from "@/components/scenario/scenario";
@@ -151,7 +151,7 @@ export function SenateDashboard({
     document.getElementById("races")?.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" });
   };
 
-  const tileHeight = tileMapHeight(320);
+  const tileHeight = 420;
 
   return (
     <div className="pb-10">
@@ -231,16 +231,10 @@ export function SenateDashboard({
               majority={threshold}
               total={SENATE_SEATS}
               majorityLabel={`${threshold} for Democratic control`}
-              leftLabel={
-                <span>
-                  <span className="font-semibold text-ink tabular-nums">{leftSeats}</span> <span className="text-ink-2">favor Democrats</span>
-                </span>
-              }
-              rightLabel={
-                <span>
-                  <span className="font-semibold text-ink tabular-nums">{rightSeats}</span> <span className="text-ink-2">favor Republicans</span>
-                </span>
-              }
+              ends={{
+                left: { label: "Democrats", value: leftSeats, color: "var(--r-safe-d)", detail: "Seats favoring the Democratic caucus" },
+                right: { label: "Republicans", value: rightSeats, color: "var(--r-safe-r)", detail: "Seats favoring Republicans" },
+              }}
             />
           </div>
           <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-2">
@@ -264,7 +258,7 @@ export function SenateDashboard({
               subtitle="States with a Senate race, colored by the model's category. The label is the favored side's chance. Click a state to open its race."
               height={tileHeight}
               csvName="senate-races-map"
-              source={sourceLine}
+              source={`${sourceLine} ${US_MAP_CREDIT}`}
               legend={
                 <>
                   {RATING_ORDER.map((r) => (
@@ -296,7 +290,7 @@ export function SenateDashboard({
               }}
             >
               {(width) => (
-                <StateTileMap
+                <UsStateMap
                   width={width}
                   fill={(st) => {
                     const c = categoryOf.get(st);
@@ -309,8 +303,7 @@ export function SenateDashboard({
                   }}
                   hrefFor={(st) => (byState.has(st) ? href(senateHref(st)) : null)}
                   selected={selectedStates}
-                  ariaLabel={`Tile map of the ${senate.length} states with a Senate race in 2026, colored by the model's category. Each state links to its race.`}
-                  emptyMessage={null}
+                  ariaLabel={`Map of the ${senate.length} states with a Senate race in 2026, colored by the model's category. Each state links to its race.`}
                   tooltip={(st) => {
                     const r = byState.get(st);
                     if (!r) return <TipTitle>{`${STATE_BY_POSTAL[st]?.name ?? st}: no Senate race in 2026`}</TipTitle>;
