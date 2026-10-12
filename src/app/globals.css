@@ -202,7 +202,9 @@ body {
   font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-:focus-visible {
+/* Keyboard focus ring for controls. Elements focused by script (tabindex="-1", e.g. a heading
+   that receives focus so screen readers announce it) are not controls and get no ring. */
+:focus-visible:not([tabindex="-1"]) {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }

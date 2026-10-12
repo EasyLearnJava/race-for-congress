@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>218 · Race for Congress: Project documentation</title>
+<meta name="description" content="How 218 · Race for Congress was planned, vibe coded with Claude Code, and what it does: a nonpartisan, interactive simulator for the 2026 US midterms.">
+<meta property="og:title" content="218 · Race for Congress: Project documentation">
+<meta property="og:description" content="A nonpartisan 2026 midterm simulator, planned and built in one day with an AI coding agent.">
+<meta property="og:image" content="https://race-for-congress.vercel.app/doc/hero.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Newsreader:opsz,wght@6..72,500..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #fbfbfa; --tile: #f2f2ef; --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --muted: #6f6d68; --line: rgba(11,11,11,.1);
+    --dem: #1859a8; --dem-2: #3c86e4; --rep: #9c1b1b; --rep-2: #e95048; --toss: #868686;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { color-scheme: dark; --page: #0b0b0b; --tile: #1b1b1a; --surface: #242423; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #9a9890; --line: rgba(255,255,255,.1);
+      --dem: #69a3f1; --dem-2: #3d80d7; --rep: #ec7c71; --rep-2: #d24d45; --toss: #8c8c8c; }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; font-optical-sizing: auto; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 400 16px/1.6 Inter, system-ui, sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  p { text-wrap: pretty; margin: 0; }
+  .serif { font-family: Newsreader, Georgia, serif; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .muted { color: var(--ink-2); }
+  .small { font-size: 14px; line-height: 1.55; }
+  .tile { background: var(--tile); border-radius: 22px; padding: 24px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 720px) { .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .g6 { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  @media (min-width: 480px) and (max-width: 719px) { .g6 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  section { padding: 56px 0 8px; }
+  .h2 { font-family: Newsreader, Georgia, serif; font-weight: 600; font-size: clamp(30px, 4.4vw, 44px); line-height: 1.05; letter-spacing: -.025em; }
+  .h3 { font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+  .lead { font-size: clamp(17px, 2vw, 20px); line-height: 1.55; color: var(--ink-2); max-width: 760px; }
+
+  /* Hero */
+  header.hero { padding: 72px 0 24px; }
+  .hero h1 { font-family: Newsreader, Georgia, serif; font-weight: 600; font-size: clamp(44px, 8vw, 88px); line-height: .98; letter-spacing: -.035em; margin-top: 14px; }
+  .hero .lead { margin-top: 22px; }
+  .ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 26px; margin-top: 28px; }
+  .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 22px; border-radius: 999px; background: var(--ink); color: var(--page); text-decoration: none; font-weight: 500; font-size: 15px; transition: opacity .2s; }
+  .btn:hover { opacity: .86; }
+  .more { font-weight: 600; text-decoration: none; }
+  .more::after { content: "\203A"; display: inline-block; margin-left: .3em; transition: transform .2s; }
+  .more:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .more:hover::after { transform: translateX(2px); }
+  .stats { margin-top: 40px; }
+  .stat { background: var(--tile); border-radius: 18px; padding: 16px 18px; }
+  .stat b { display: block; font-size: clamp(24px, 3vw, 32px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat span { display: block; margin-top: 8px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+  .shot { display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); }
+  figure { margin: 0; }
+  figcaption { margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .hero-shot { margin-top: 36px; }
+
+  /* Lists and chips */
+  ul.clean { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+  ul.clean li { padding-left: 22px; position: relative; font-size: 15px; line-height: 1.55; }
+  ul.clean li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); opacity: .55; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip { font-size: 13px; padding: 5px 12px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); max-width: 100%; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+
+  /* Feature cards */
+  .feature { display: flex; flex-direction: column; gap: 14px; }
+  .feature .shot { aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .feature p { font-size: 15px; color: var(--ink-2); }
+
+  /* Steps */
+  .steps { counter-reset: s; }
+  .step { position: relative; padding-left: 52px; }
+  .step::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: 0; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--page); font-weight: 600; font-size: 15px; }
+
+  /* Flow diagram */
+  .flow { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+  @media (min-width: 900px) { .flow { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  .node { background: var(--surface); border-radius: 16px; padding: 14px 16px; box-shadow: inset 0 0 0 1px var(--line); position: relative; }
+  .node b { display: block; font-size: 15px; }
+  .node span { display: block; margin-top: 4px; font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+  @media (min-width: 900px) { .node:not(:last-child)::after { content: "\203A"; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--muted); } }
+
+  /* Timeline and table */
+  .timeline { display: grid; gap: 8px; margin-top: 14px; }
+  .t { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 12px; font-size: 14px; }
+  .t time { font-variant-numeric: tabular-nums; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 600; color: var(--ink-2); border-top: 0; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+  .scroll { overflow-x: auto; }
+
+  .bar { display: flex; height: 34px; border-radius: 8px; overflow: hidden; margin-top: 16px; }
+  .bar i { display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 13px; font-weight: 600; color: #fff; box-shadow: inset -2px 0 0 var(--page); }
+  .status-live { color: var(--ink); }
+  footer { padding: 56px 0 64px; font-size: 13px; color: var(--muted); }
+
+  /* Sections rise into view (only below the fold; off with reduced motion or without JS) */
+  .reveal.pending { opacity: 0; transform: translateY(20px); }
+  .reveal { transition: opacity .6s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+  @media (prefers-reduced-motion: reduce) { .reveal.pending { opacity: 1; transform: none; } }
+  @media print { .reveal.pending { opacity: 1; transform: none; } section { padding-top: 24px; } .hero { padding-top: 24px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Project documentation · October 2026</div>
+  <h1>218 · Race for Congress</h1>
+  <p class="lead">A nonpartisan, interactive simulator for the 2026 US midterms. Move the national vote and watch control of the House and Senate change, race by race. It is a simulation, not a forecast.</p>
+  <div class="ctas">
+    <a class="btn" href="https://race-for-congress.vercel.app">Open the live site</a>
+    <a class="more" href="https://github.com/EasyLearnJava/race-for-congress">Source on GitHub</a>
+  </div>
+  <div class="grid g6 stats" aria-label="Project at a glance">
+    <div class="stat"><b>435</b><span>House races on the 2026 district lines</span></div>
+    <div class="stat"><b>35</b><span>Senate races, including two specials</span></div>
+    <div class="stat"><b>543</b><span>prerendered pages, one per race and state</span></div>
+    <div class="stat"><b>10</b><span>forecasters' ratings compared side by side</span></div>
+    <div class="stat"><b>47</b><span>unit tests, plus browser sweeps in light and dark</span></div>
+    <div class="stat"><b>1 day</b><span>from scaffold to launch-ready: 10 commits, ~41k lines</span></div>
+  </div>
+  <figure class="hero-shot">
+    <img class="shot" src="doc/hero.jpg" alt="The 218 overview page: the headline '435 seats. 218 to win.', a national vote slider and six headline numbers" width="1280" height="800">
+  </figure>
+</header>
+
+<section class="reveal" aria-labelledby="why">
+  <div class="grid g2">
+    <div>
+      <div class="eyebrow">The idea</div>
+      <h2 id="why" class="h2" style="margin-top:10px">One slider. Every race recomputes.</h2>
+    </div>
+    <div>
+      <p class="lead" style="font-size:17px">Nine states (AL, CA, FL, LA, NC, OH, TN, TX, UT) vote on new House maps in 2026, so the last election is the wrong baseline. 218 measures every district on its 2026 lines, gathers ten forecasters' ratings and the money in one place, and lets anyone ask "what if the country leans a little further one way?"</p>
+      <ul class="clean">
+        <li><b>Play, in 30 seconds:</b> drag the national vote and watch seats flip.</li>
+        <li><b>Personal, in 60 seconds:</b> open any race: chances, flip point, candidates, money.</li>
+        <li><b>Predict and share, in 3 minutes:</b> make your own call on the closest seats and post it.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" aria-labelledby="features">
+  <div class="eyebrow">What it does</div>
+  <h2 id="features" class="h2" style="margin-top:10px">Features</h2>
+  <div class="grid g3" style="margin-top:24px">
+    <article class="tile feature">
+      <img class="shot" src="doc/house.jpg" alt="Seat bar with counts per rating and a geographic map of states labeled with their expected House splits" loading="lazy" width="813" height="908">
+      <h3 class="h3">Seat bar and maps</h3>
+      <p>A 270toWin-style seat bar with counts in every segment and the 218 line, a geographic state map labeled with each delegation's split, and an equal-area district map where every seat is the same size.</p>
+    </article>
+    <article class="tile feature">
+      <img class="shot" src="doc/race.jpg" alt="A House race page for Pennsylvania's 7th district with chance, expected margin, flip point and lean" loading="lazy" width="1280" height="800">
+      <h3 class="h3">A page for every race</h3>
+      <p>435 House and 35 Senate pages: the chance in your scenario, the flip point, district lean, every forecaster's rating, FEC money and outside spending, and the state around it.</p>
+    </article>
+    <article class="tile feature">
+      <img class="shot" src="doc/call.jpg" alt="Make your call: a card for Iowa's 2nd district with Democrat, Toss-up and Republican buttons" loading="lazy" width="1232" height="492">
+      <h3 class="h3">Make your call</h3>
+      <p>Call the 40 closest seats as Democrat, Toss-up or Republican, see who reaches 218, and share it as a link or a generated image (link preview and 9:16 story).</p>
+    </article>
+    <article class="tile feature">
+      <img class="shot" src="doc/scatter.jpg" alt="Scatter plot of district lean against the model's expected margin, with favored zones and crossover corners" loading="lazy" width="709" height="695">
+      <h3 class="h3">House explorer</h3>
+      <p>Filter all 435 seats, then read "Where every seat stands": lean against expected margin, favored zones, crossover seats, and a reference line that shows what incumbency and the forecasters add.</p>
+    </article>
+    <article class="tile feature">
+      <img class="shot" src="doc/senate.jpg" alt="Geographic Senate map with each state's favored side and chance" loading="lazy" width="757" height="421">
+      <h3 class="h3">Senate: the road to 51</h3>
+      <p>A geographic map of the 35 races with each favored side's chance, all 100 seats on one bar, and the tipping-point state where control is decided.</p>
+    </article>
+    <article class="tile feature">
+      <img class="shot" src="doc/dark.jpg" alt="The Senate dashboard in dark mode" loading="lazy" width="1280" height="800">
+      <h3 class="h3">Built to feel good</h3>
+      <p>Sliding segmented controls, numbers that roll to new values, bars that glide, sections that rise into view, a real dark mode, and every chart readable at 360px.</p>
+    </article>
+  </div>
+  <div class="tile" style="margin-top:16px">
+    <h3 class="h3">And more</h3>
+    <div class="chips">
+      <span class="chip">Redistricting: the finish line moved 3.3 points</span>
+      <span class="chip">Money: FEC fundraising and outside spending</span>
+      <span class="chip">Forecasters: where 10 raters agree and differ</span>
+      <span class="chip">Scenario lab: model settings and seat odds</span>
+      <span class="chip">Ask 218: an AI analyst that answers only from the site's data</span>
+      <span class="chip">State pages for all 50 states</span>
+      <span class="chip">Search across districts, states and candidates</span>
+      <span class="chip">CSV and JSON downloads</span>
+      <span class="chip">Methodology in plain English</span>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" aria-labelledby="plan">
+  <div class="eyebrow">How it was planned</div>
+  <h2 id="plan" class="h2" style="margin-top:10px">A written plan, and rules every session follows</h2>
+  <div class="grid g2" style="margin-top:24px">
+    <div class="tile">
+      <span class="tag">PLAN.md</span>
+      <h3 class="h3" style="margin-top:12px">The product plan</h3>
+      <ul class="clean">
+        <li>Three user jobs (play, personal, predict and share) drive every screen.</li>
+        <li>Features ranked Must, Should, Could and Won't build, with a minimum demo as the cut line.</li>
+        <li>Data rules: lean is the 2024 presidential margin on the 2026 lines, never the last House result.</li>
+        <li>A simple, explainable model; ratings shown next to it, never mixed in silently.</li>
+        <li>A dated timeline to an October 20 launch, two weeks before Election Day (November 3).</li>
+      </ul>
+    </div>
+    <div class="tile">
+      <span class="tag">CLAUDE.md</span>
+      <h3 class="h3" style="margin-top:12px">The rules the AI agent works by</h3>
+      <ul class="clean">
+        <li><b>Data:</b> every number shown carries its source and date; sources credited by name.</li>
+        <li><b>Model:</b> pure, deterministic functions with unit tests; the UI never re-implements the math.</li>
+        <li><b>Design:</b> works at 360px and by keyboard, never color alone, light and dark, shared color tokens.</li>
+        <li><b>Neutrality:</b> same wording for both parties, Democrats left in blue, Republicans right in red.</li>
+        <li><b>Done means:</b> lint and build pass, checked at 360px and 1280px in both themes, tests for model changes.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" aria-labelledby="vibe">
+  <div class="eyebrow">How it was vibe coded</div>
+  <h2 id="vibe" class="h2" style="margin-top:10px">A human with taste, an AI engineer, and a loop that checks itself</h2>
+  <p class="lead" style="margin-top:14px">Built in conversation with <b>Claude Code</b> (Claude Opus 5.5) as the engineer. The human set the direction, priorities and visual bar in plain English; the agent planned, wrote the code and tests, and proved each change in a real browser before asking to push.</p>
+  <div class="grid g2" style="margin-top:24px">
+    <div class="tile steps" style="display:grid;gap:18px">
+      <div class="step"><b>Ask in plain English.</b><p class="small muted">"Build the next feature", "make it feel like Apple", "this map can look better".</p></div>
+      <div class="step"><b>Read before writing.</b><p class="small muted">The agent reads PLAN.md, CLAUDE.md, the framework's own docs and the existing code first.</p></div>
+      <div class="step"><b>Build with tests.</b><p class="small muted">Pure logic gets unit tests; risky flows get fakes (a local stand-in for the Batches API).</p></div>
+      <div class="step"><b>Verify like a user.</b><p class="small muted">Lint, type check, tests and a production build, then a headless browser across every main route at 360px and 1280px, light and dark, with screenshots reviewed.</p></div>
+      <div class="step"><b>Commit, then push on approval.</b><p class="small muted">Every push deploys to Vercel. Skills (claude-api, an apple-design skill installed from GitHub) and project memory carry knowledge between sessions.</p></div>
+    </div>
+    <div style="display:grid;gap:16px">
+      <div class="tile">
+        <h3 class="h3">Caught by the agent's own checks</h3>
+        <ul class="clean small">
+          <li>A map regex read the "M" in path data as a coordinate, so every state map was blank.</li>
+          <li>Analytics would have recorded a shared call's seat counts through the page title. Titles are now dropped.</li>
+          <li>The AI party-swap test would have renamed Rep. Andy Harris "Andy Trump". Swaps now use party words only.</li>
+          <li>census.gov rate-limited bulk downloads; the pipeline now detects error pages, paces and retries.</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <h3 class="h3">The build, commit by commit (October 11)</h3>
+        <div class="timeline">
+          <div class="t"><time>09:23</time><span>Scaffold and project plan</span></div>
+          <div class="t"><time>18:44</time><span>Data pipeline, model and every route</span></div>
+          <div class="t"><time>19:05</time><span>Make your call with share images</span></div>
+          <div class="t"><time>19:34</time><span>Privacy-first analytics</span></div>
+          <div class="t"><time>19:49</time><span>Nightly data refresh with a publish gate</span></div>
+          <div class="t"><time>20:48</time><span>AI race summaries with grounding checks</span></div>
+          <div class="t"><time>21:07</time><span>Apple design skill installed and applied</span></div>
+          <div class="t"><time>22:41</time><span>Sliding controls, rolling numbers, new seat bar</span></div>
+          <div class="t"><time>23:31</time><span>Geographic House map, redesigned scatter</span></div>
+          <div class="t"><time>23:50</time><span>apple.com-style tiles, type and motion</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" aria-labelledby="arch">
+  <div class="eyebrow">How it works</div>
+  <h2 id="arch" class="h2" style="margin-top:10px">Architecture</h2>
+  <div class="flow" style="margin-top:24px" aria-label="Data flow from sources to the live site">
+    <div class="node"><b>Public sources</b><span>The Downballot, Wikipedia, FEC, US Census Bureau</span></div>
+    <div class="node"><b>Python pipeline</b><span>pandas and pandera: download, join, validate 435 + 35 races</span></div>
+    <div class="node"><b>CSV source of truth</b><span>data/clean, versioned in git; a nightly Action refreshes it</span></div>
+    <div class="node"><b>Next.js 16 build</b><span>JSON per dataset, 543 prerendered pages, share images</span></div>
+    <div class="node"><b>Vercel</b><span>deploys on every push to main</span></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="tile">
+      <h3 class="h3">The model</h3>
+      <p class="small muted" style="margin-top:8px">Each race's expected margin blends fundamentals (district lean + national vote + incumbency) with the median forecaster rating. Uncertainty has a shared national error and a race error, and seat counts are computed exactly rather than by random sampling, so the same link always shows the same numbers.</p>
+    </div>
+    <div class="tile">
+      <h3 class="h3">AI, with guardrails</h3>
+      <p class="small muted" style="margin-top:8px">Code computes every number; AI only writes sentences. Ask 218 answers through strict lookup tools. Race summaries are written in advance with the Message Batches API and published only if every number matches the data, a grader finds them neutral, a party-swap test passes, and a person approves the close races.</p>
+    </div>
+    <div class="tile">
+      <h3 class="h3">Stack</h3>
+      <div class="chips">
+        <span class="chip">Next.js 16</span><span class="chip">React 19</span><span class="chip">TypeScript</span><span class="chip">Tailwind CSS 4</span><span class="chip">d3-scale</span><span class="chip">Vitest</span><span class="chip">Python · pandas · pandera</span><span class="chip">Anthropic SDK</span><span class="chip">GitHub Actions</span><span class="chip">PostHog</span><span class="chip">Vercel</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" aria-labelledby="trust">
+  <div class="eyebrow">Trust</div>
+  <h2 id="trust" class="h2" style="margin-top:10px">Neutral, private and accessible by design</h2>
+  <div class="bar" role="img" aria-label="Example seat bar: Democrats on the left in blue, toss-ups in gray, Republicans on the right in red">
+    <i style="flex:204;background:var(--dem)">Democrats left</i><i style="flex:31;background:var(--dem-2)"></i><i style="flex:16;background:var(--toss)"></i><i style="flex:31;background:var(--rep-2)"></i><i style="flex:169;background:var(--rep)">Republicans right</i>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="tile"><h3 class="h3">Neutral</h3><p class="small muted" style="margin-top:8px">Same templates and words for both parties, no loaded adjectives, "simulation, not a forecast" on every result, and voting questions sent to vote.gov.</p></div>
+    <div class="tile"><h3 class="h3">Private</h3><p class="small muted" style="margin-top:8px">A person's picks live only in their own link. Analytics count actions, never choices: no cookies, no profiles, every URL cut to its path before sending.</p></div>
+    <div class="tile"><h3 class="h3">Accessible</h3><p class="small muted" style="margin-top:8px">Works at 360px and by keyboard, a table view behind every chart, labels as well as color, dark mode, and reduced-motion alternatives for every animation.</p></div>
+  </div>
+</section>
+
+<section class="reveal" aria-labelledby="data">
+  <div class="eyebrow">Sources</div>
+  <h2 id="data" class="h2" style="margin-top:10px">Where the data comes from</h2>
+  <div class="tile scroll" style="margin-top:24px">
+    <table>
+      <thead><tr><th scope="col">Data</th><th scope="col">Source</th></tr></thead>
+      <tbody>
+        <tr><td>2024 presidential results on the 2026 district lines</td><td>The Downballot</td></tr>
+        <tr><td>Equal-area district map</td><td>Congressional District Hexmap by Daniel Donner for The Downballot (CC BY 4.0)</td></tr>
+        <tr><td>Candidates, incumbents, ratings from 10 forecasters, polling averages</td><td>Wikipedia, compiled from the named forecasters and aggregators</td></tr>
+        <tr><td>Fundraising and outside spending</td><td>Federal Election Commission bulk data</td></tr>
+        <tr><td>State shapes for the geographic maps</td><td>US Census Bureau, via us-atlas</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="reveal" aria-labelledby="status">
+  <div class="eyebrow">Where it stands</div>
+  <h2 id="status" class="h2" style="margin-top:10px">Status and roadmap</h2>
+  <div class="grid g3" style="margin-top:24px">
+    <div class="tile"><span class="tag">Live</span><p class="small muted" style="margin-top:10px">Everything above: the scenario, maps, 470 race pages, Make your call with share images, Senate, money, redistricting, forecasters, the scenario lab, downloads and methodology.</p></div>
+    <div class="tile"><span class="tag">Built, needs keys</span><p class="small muted" style="margin-top:10px">Ask 218 and the AI race summaries need an Anthropic API key on the deployment; analytics needs a PostHog key; the nightly refresh runs from GitHub Actions.</p></div>
+    <div class="tile"><span class="tag">Next</span><p class="small muted" style="margin-top:10px">Find my district (address or location to a 2026 district, in progress), past House results, then an Election Night mode and a "how did your call do?" scorecard.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>218 · Race for Congress is independent and nonpartisan: a simulation, not a forecast, and not affiliated with any party, campaign or candidate. Register or find your polling place at <a href="https://vote.gov">vote.gov</a>.</p>
+  <p style="margin-top:8px"><a class="more" href="https://race-for-congress.vercel.app">Open the live site</a></p>
+</footer>
+
+</div>
+<script>
+  // Sections below the fold rise into view; anything visible at load is never hidden.
+  (function () {
+    if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.remove("pending"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    document.querySelectorAll(".reveal").forEach(function (el) {
+      if (el.getBoundingClientRect().top > innerHeight) { el.classList.add("pending"); io.observe(el); }
+    });
+  })();
+</script>
+</body>
+</html>
