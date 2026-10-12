@@ -101,6 +101,12 @@ export function Overview({
           {environment ? ` (default: the polling average, ${fmtMargin(environment.margin)})` : ""}. Click any seat, state or bar to drill
           down. Data updated {fmtDate(generated)}.
         </p>
+        <Link
+          href={href("/call")}
+          className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-surface hover:opacity-90"
+        >
+          Make your call on the closest seats <span aria-hidden>→</span>
+        </Link>
       </header>
 
       <section aria-label="Headline numbers" className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">

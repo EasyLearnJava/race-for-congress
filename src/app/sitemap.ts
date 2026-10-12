@@ -8,7 +8,7 @@ const SITE = "https://race-for-congress.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = meta.generated;
-  const pages = ["/", "/house", "/senate", "/states", "/forecasters", "/money", "/redistricting", "/simulator", "/ask", "/data", "/methodology"];
+  const pages = ["/", "/house", "/senate", "/states", "/forecasters", "/money", "/redistricting", "/simulator", "/call", "/ask", "/data", "/methodology"];
   return [
     ...pages.map((p) => ({ url: `${SITE}${p}`, lastModified, changeFrequency: "daily" as const, priority: p === "/" ? 1 : 0.8 })),
     ...STATES.map((s) => ({ url: `${SITE}${stateHref(s.postal)}`, lastModified, changeFrequency: "daily" as const, priority: 0.6 })),

@@ -9,7 +9,7 @@ import { DEFAULT_PARAMS } from "@/lib/model/engine";
 import { fmtMargin } from "@/lib/format";
 import { useScenario } from "./scenario";
 
-const SCENARIO_PATHS = ["/", "/house", "/senate", "/states", "/simulator", "/redistricting"];
+const SCENARIO_PATHS = ["/", "/house", "/senate", "/states", "/simulator", "/redistricting", "/call"];
 
 const PRESETS = [
   { label: "2018 blue wave", env: 8.6 },

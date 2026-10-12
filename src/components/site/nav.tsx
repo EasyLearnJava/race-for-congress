@@ -15,6 +15,7 @@ export const NAV = [
   { href: "/money", label: "Money" },
   { href: "/redistricting", label: "Redistricting" },
   { href: "/simulator", label: "Simulator" },
+  { href: "/call", label: "Your call" },
   { href: "/ask", label: "Ask AI" },
   { href: "/data", label: "Data" },
 ];

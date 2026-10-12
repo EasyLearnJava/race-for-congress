@@ -82,7 +82,7 @@ export function impliedMargin(score: number): number {
 }
 
 /** Races decided by who is on the ballot: only one party's candidates (or only one party at all). */
-export function forcedWinner(race: ModelRace): "D" | "R" | null {
+export function forcedWinner(race: Pick<ModelRace, "special">): "D" | "R" | null {
   switch (race.special) {
     case "same_party_D":
     case "no_republican":
