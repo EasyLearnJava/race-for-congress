@@ -96,6 +96,29 @@ export default function MethodologyPage() {
               <li>Ranked-choice (Alaska, Maine) and runoff rules are not modeled separately.</li>
             </ul>
           </Card>
+          <div id="ai-summaries" className="scroll-mt-32">
+            <Card>
+              <SectionTitle title="AI race summaries" />
+              <p className="text-sm leading-6 text-ink-2">
+                Code computes every number; AI only writes sentences. Each summary is written in advance by Claude (Anthropic&apos;s
+                claude-opus-5-5) from one race&apos;s data sheet and nothing else, then checked before it appears:
+              </p>
+              <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-6 text-ink-2">
+                <li>Every number in it must appear in that race&apos;s data.</li>
+                <li>A word list rejects loaded or predictive language, and both major-party candidates must be named.</li>
+                <li>A second AI pass grades whether it is grounded in the data and neutral.</li>
+                <li>
+                  Party-swap test: for close races the same race is written again with the parties exchanged, and the two versions
+                  must describe both sides with the same tone.
+                </li>
+                <li>A person reads every Lean and Toss-up summary before it is published.</li>
+              </ul>
+              <p className="mt-2 text-sm leading-6 text-ink-2">
+                Each summary shows the date of the data it was written from. When figures change later, the numbers elsewhere on the
+                page are current and take precedence.
+              </p>
+            </Card>
+          </div>
         </div>
 
         <div className="space-y-4">

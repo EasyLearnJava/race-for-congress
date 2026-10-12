@@ -6,6 +6,7 @@ import type {
   HouseRace,
   MoneyRow,
   OutsideRow,
+  RaceSummary,
   Rating,
   RatingLabel,
   SenateRace,
@@ -28,6 +29,8 @@ interface Common {
   national2024: number;
   /** Build date of the datasets. */
   generated: string;
+  /** The published AI summary of this race, when there is one. */
+  summary: RaceSummary | null;
 }
 
 export interface SenateLink {

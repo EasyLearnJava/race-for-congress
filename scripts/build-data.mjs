@@ -5,6 +5,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { csvParse } from "d3-dsv";
 
+import { allFacts } from "./summaries/facts.mjs";
+
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const clean = join(root, "data", "clean");
 const generated = join(root, "src", "generated");
@@ -171,6 +173,31 @@ for (const file of ["hexmap_2026.json", "meta.json"]) {
   writeFileSync(join(generated, file.replace("_2026", "")), existsSync(source) ? readFileSync(source, "utf8") : "{}");
 }
 
+// AI race summaries (scripts/race-summaries.mjs): only published ones reach the site. A summary
+// is stale when its race's facts have changed since it was written; the page says so.
+const summaryStore = join(root, "data", "ai", "race_summaries.json");
+const currentHash = new Map(
+  allFacts({
+    house: datasets.house ?? [],
+    senate: datasets.senate ?? [],
+    ratings: datasets.ratings ?? [],
+    money: datasets.money ?? [],
+    outside: datasets.outside ?? [],
+    generated: JSON.parse(readFileSync(join(generated, "meta.json"), "utf8")).generated ?? "",
+  }).map((f) => [f.id, f.hash]),
+);
+const summaries = Object.entries(existsSync(summaryStore) ? JSON.parse(readFileSync(summaryStore, "utf8")).races : {})
+  .filter(([, s]) => s.status === "published" && s.summary)
+  .map(([id, s]) => ({
+    id,
+    summary: s.summary,
+    whatDecides: s.whatDecides,
+    generatedAt: s.generatedAt,
+    dataAsOf: s.dataAsOf,
+    stale: currentHash.get(id) !== s.hash,
+  }));
+writeFileSync(join(generated, "summaries.json"), JSON.stringify(summaries));
+
 // Public downloads: every clean CSV plus JSON versions of the race tables.
 for (const file of [
   "races_house_2026.csv",
@@ -215,4 +242,4 @@ const search = [
 writeFileSync(join(publicData, "search.json"), JSON.stringify(search));
 
 const counts = Object.fromEntries(Object.entries(datasets).map(([k, v]) => [k, v?.length ?? 0]));
-console.log("build-data:", JSON.stringify(counts));
+console.log("build-data:", JSON.stringify({ ...counts, summaries: summaries.length, staleSummaries: summaries.filter((s) => s.stale).length }));

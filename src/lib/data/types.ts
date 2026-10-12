@@ -169,6 +169,18 @@ export interface Source {
   retrieved: string;
 }
 
+/** A published AI race summary (scripts/race-summaries.mjs), checked before publishing. */
+export interface RaceSummary {
+  id: string;
+  summary: string;
+  whatDecides: string;
+  generatedAt: string;
+  /** Build date of the data the summary was written from. */
+  dataAsOf: string;
+  /** The race's facts changed after the summary was written. */
+  stale: boolean;
+}
+
 export interface Meta {
   generated: string;
   national_2024: { harris: number; trump: number; total: number; margin: number; note: string };

@@ -54,7 +54,7 @@ A nonpartisan, interactive simulator for the 2026 US midterms: move the national
 
 **AI (Claude API)**
 - Model: `claude-opus-5-5`, called through the official Anthropic SDK.
-- Race summaries: generated in advance with the Message Batches API, JSON via `output_config.format`. Validate every number against the input row.
+- Race summaries: generated in advance with the Message Batches API, JSON via `output_config.format`. Validate every number against the input row. Run with `npm run summaries` (see `docs/AI_SUMMARIES.md`); a person approves every Lean and Toss-up summary.
 - Chat:
   - strict tools with `tool_choice: auto`; forced `tool_choice` returns a 400 on this model
   - effort `low`, cache the system prompt and tools

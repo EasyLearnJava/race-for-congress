@@ -17,6 +17,7 @@ import redistrictingCurveJson from "@/generated/redistrictingCurve.json";
 import redistrictingDistrictsJson from "@/generated/redistrictingDistricts.json";
 import senateJson from "@/generated/senate.json";
 import spendersJson from "@/generated/spenders.json";
+import summariesJson from "@/generated/summaries.json";
 
 import type { SenateComposition } from "../model/engine";
 import type {
@@ -28,6 +29,7 @@ import type {
   MoneyRow,
   OldLinesRow,
   OutsideRow,
+  RaceSummary,
   Rating,
   Row,
   SenateRace,
@@ -83,6 +85,12 @@ export function outsideFor(raceId: string): OutsideRow | undefined {
 
 export function spendersFor(raceId: string): SpenderRow[] {
   return spenders.filter((s) => s.raceId === raceId).sort((a, b) => b.amount - a.amount);
+}
+
+const summaries = summariesJson as RaceSummary[];
+
+export function summaryFor(raceId: string): RaceSummary | undefined {
+  return summaries.find((s) => s.id === raceId);
 }
 
 export function historyFor(raceId: string): HistoryRow[] {

@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { track, takeNavigationSource } from "@/lib/analytics";
 import { useProjections } from "@/lib/model/use-outlook";
 import { fmtDate, fmtMargin } from "@/lib/format";
+import { AiSummary } from "./ai-summary";
 import { CandidatesCard } from "./candidates-card";
 import { ForecastersCard } from "./forecasters-card";
 import { HistorySection } from "./history-section";
@@ -36,6 +37,8 @@ export function RacePage({ data }: { data: RaceData }) {
         Simulation, not a forecast: model numbers are for a national vote of {fmtMargin(params.env)} and update with the scenario bar. Data as of{" "}
         {fmtDate(data.generated)}.
       </p>
+
+      {data.summary && <AiSummary summary={data.summary} />}
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <CandidatesCard race={race} />

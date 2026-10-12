@@ -48,3 +48,7 @@ __pycache__/
 # generated from data/clean by scripts/build-data.mjs
 /src/generated/
 /public/data/
+
+# AI race summaries: batch in progress and the generated review list (data/ai/race_summaries.json is committed)
+/data/ai/.state.json
+/data/ai/review.md

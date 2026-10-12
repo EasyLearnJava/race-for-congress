@@ -14,6 +14,7 @@ import {
   ratingsFor,
   senateInState,
   spendersFor,
+  summaryFor,
 } from "@/lib/data";
 import type { HouseRace, SenateRace } from "@/lib/data/types";
 import type { HouseRaceData, SenateRaceData } from "./types";
@@ -45,6 +46,7 @@ function common(race: HouseRace | SenateRace, chamber: "house" | "senate") {
     stateHouse: houseInState(race.state),
     national2024: meta.national_2024.margin,
     generated: meta.generated,
+    summary: summaryFor(race.id) ?? null,
   };
 }
 

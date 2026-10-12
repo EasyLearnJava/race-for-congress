@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "summaries": "node scripts/race-summaries.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",
