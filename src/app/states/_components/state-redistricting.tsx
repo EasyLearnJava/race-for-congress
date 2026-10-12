@@ -195,7 +195,7 @@ export function StateRedistricting({
         title={<span id="redistricting-title">The new map</span>}
         description={`${name} votes on new congressional lines in 2026. The comparisons hold the 2024 presidential vote fixed, so any change comes from the lines alone.`}
         action={
-          <Link href={href("/redistricting")} className="text-xs font-semibold underline underline-offset-2">
+          <Link href={href("/redistricting")} className="link-more text-sm">
             How much the new maps moved the race
           </Link>
         }

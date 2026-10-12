@@ -233,7 +233,7 @@ function CoverageNote({ coverage, hasCandidates }: { coverage: Coverage; hasCand
           </div>
         )}
       </div>
-      <Link href={href("/data")} className="mt-2 inline-block text-xs font-semibold underline underline-offset-2">
+      <Link href={href("/data")} className="mt-2 inline-block link-more text-sm">
         Download the full money tables
       </Link>
     </Card>

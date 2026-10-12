@@ -81,7 +81,7 @@ export function Simulator({
         actions={<CopyLinkButton />}
       />
 
-      <p className="mb-4 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm leading-6 text-ink" aria-live="polite">
+      <p className="mb-4 rounded-2xl bg-surface-2 px-4 py-3 text-sm leading-6 text-ink" aria-live="polite">
         At a national vote of <strong className="font-semibold tabular-nums">{fmtMargin(shown.env)}</strong>, Democrats have a{" "}
         <strong className="font-semibold tabular-nums">{fmtProb(houseOutlook.pDemMajority)}</strong> chance of a House majority and a{" "}
         <strong className="font-semibold tabular-nums">{fmtProb(senateOutlook.pDemControl)}</strong> chance of Senate control;

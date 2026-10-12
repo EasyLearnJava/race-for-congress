@@ -148,7 +148,7 @@ export function DecidingSeats({ house, projections }: { house: SimRace[]; projec
         title={<span id="deciding-title">Seats that decide it</span>}
         description={`The ${COUNT} House races closest to an even chance at a national vote of ${fmtMargin(params.env)}. The flip point is the national vote at which a race's expected margin crosses zero.`}
         action={
-          <Link href={href(explorerHref(ids))} className="text-xs font-semibold underline underline-offset-2">
+          <Link href={href(explorerHref(ids))} className="link-more text-sm">
             Open these {COUNT} in the explorer
           </Link>
         }

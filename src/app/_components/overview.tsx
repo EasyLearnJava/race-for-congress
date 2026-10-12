@@ -96,22 +96,25 @@ export function Overview({
 
   return (
     <div className="pb-6">
-      <header className="pt-6 pb-5 sm:pt-8">
+      {/* Hero in the apple.com pattern: display headline, one line of context, a pill and a text link. */}
+      <header className="pt-10 pb-10 sm:pt-16 sm:pb-12">
         <div className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">2026 midterms · Live scenario</div>
-        <h1 className="mt-1 font-serif text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
+        <h1 className="mt-3 max-w-4xl font-serif text-[40px] leading-[1.02] font-semibold tracking-[-0.03em] sm:text-6xl lg:text-7xl">
           435 seats. 218 to win. Here&apos;s where it stands.
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-2 sm:text-base">
+        <p className="mt-5 max-w-3xl text-base leading-7 text-ink-2 sm:text-lg sm:leading-8">
           Every number below recomputes from the national vote you set above
           {environment ? ` (default: the polling average, ${fmtMargin(environment.margin)})` : ""}. Click any seat, state or bar to drill
           down. Data updated {fmtDate(generated)}.
         </p>
-        <Link
-          href={href("/call")}
-          className="press mt-4 inline-flex items-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-surface hover:opacity-90"
-        >
-          Make your call on the closest seats <span aria-hidden>→</span>
-        </Link>
+        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link href={href("/call")} className="btn btn-primary press">
+            Make your call
+          </Link>
+          <Link href={href("/simulator")} className="link-more text-[15px]">
+            Try the scenario lab
+          </Link>
+        </div>
       </header>
 
       <section aria-label="Headline numbers" className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
@@ -125,9 +128,9 @@ export function Overview({
         <Stat
           label="House seats, D–R"
           value={
-            <>
+            <span className="whitespace-nowrap">
               <Ticker value={expectedD} format={(n) => String(Math.round(n))} />–<Ticker value={HOUSE_SEATS - expectedD} format={(n) => String(Math.round(n))} />
-            </>
+            </span>
           }
           detail={`Democrats' 80% range: ${houseOutlook.low}–${houseOutlook.high}`}
           href={href("/house")}
@@ -148,10 +151,10 @@ export function Overview({
         <Stat
           label="Senate seats, D–R"
           value={
-            <>
+            <span className="whitespace-nowrap">
               <Ticker value={senateOutlook.expectedDem} format={(n) => String(Math.round(n))} />–
               <Ticker value={senateOutlook.expectedRep} format={(n) => String(Math.round(n))} />
-            </>
+            </span>
           }
           detail="Democratic caucus needs 51 for control"
           href={href("/senate")}
@@ -164,7 +167,7 @@ export function Overview({
         />
       </section>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
         <Card className="lg:col-span-2">
           <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
             <div>
@@ -277,7 +280,7 @@ export function Overview({
               <h3 className="text-sm font-semibold">{ins.title}</h3>
               <p className="mt-1 text-sm leading-6 text-ink-2">{ins.body}</p>
               {ins.href && (
-                <Link href={href(ins.href)} className="mt-2 inline-block text-xs font-semibold underline underline-offset-2">
+                <Link href={href(ins.href)} className="mt-2 inline-block link-more text-sm">
                   {ins.linkLabel ?? "Explore"}
                 </Link>
               )}
@@ -293,7 +296,7 @@ export function Overview({
           title="The road to 218"
           description="Seats ranked from most to least Democratic in this scenario. Democrats need every seat down to the 218th; the line marks the tipping point."
           action={
-            <Link href={href("/house?competitive=1")} className="text-xs font-semibold underline underline-offset-2">
+            <Link href={href("/house?competitive=1")} className="link-more text-sm">
               All competitive seats
             </Link>
           }
@@ -354,7 +357,7 @@ export function Overview({
           title="The Senate"
           description={`${senate.length} seats are up. Democrats need 51 seats for control (a 50–50 tie goes to the Republican vice president).`}
           action={
-            <Link href={href("/senate")} className="text-xs font-semibold underline underline-offset-2">
+            <Link href={href("/senate")} className="link-more text-sm">
               Open the Senate dashboard
             </Link>
           }

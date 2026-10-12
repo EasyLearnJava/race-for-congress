@@ -120,7 +120,7 @@ export function AskClient() {
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
-      <div className="flex min-h-[420px] flex-col rounded-xl border border-line bg-surface">
+      <div className="flex min-h-[420px] flex-col tile">
         <div className="flex-1 space-y-4 p-4 sm:p-5" aria-live="polite">
           {turns.length === 0 && (
             <div className="py-6 text-sm text-ink-2">
@@ -184,21 +184,21 @@ export function AskClient() {
           <button
             type="submit"
             disabled={pending || !question.trim()}
-            className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-40"
+            className="btn btn-primary btn-sm"
           >
             Ask
           </button>
         </form>
       </div>
       <aside className="space-y-3 text-sm text-ink-2">
-        <div className="rounded-xl border border-line bg-surface p-4">
+        <div className="tile p-4">
           <div className="font-semibold text-ink">How it works</div>
           <p className="mt-1">
             Claude reads your question, then calls four tools that query this site&apos;s data: search races, open one race, run the
             chamber outlook, and compare forecasters. It writes the answer only from what those tools return.
           </p>
         </div>
-        <div className="rounded-xl border border-line bg-surface p-4">
+        <div className="tile p-4">
           <div className="font-semibold text-ink">Ground rules</div>
           <p className="mt-1">
             Nonpartisan, no endorsements. For registering and voting, see{" "}

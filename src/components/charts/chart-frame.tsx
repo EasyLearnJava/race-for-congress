@@ -43,10 +43,10 @@ export function ChartFrame({
   const [view, setView] = useState<"chart" | "table">("chart");
 
   return (
-    <figure className={`flex flex-col rounded-xl border border-line bg-surface p-4 sm:p-5 ${className}`}>
+    <figure className={`tile reveal flex flex-col p-5 sm:p-6 ${className}`}>
       <figcaption className="mb-3 flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-ink">{title}</div>
+          <div className="text-base font-semibold tracking-[-0.01em] text-ink">{title}</div>
           {subtitle && <div className="mt-0.5 text-xs leading-5 text-ink-2">{subtitle}</div>}
         </div>
         {/* Wraps on narrow screens: a chart's own toggle plus Chart/Table and CSV can exceed 360px. */}

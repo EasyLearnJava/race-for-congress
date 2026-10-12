@@ -68,7 +68,7 @@ export function StateMapCard({
         title={`${stateName}'s House ${single ? "seat" : `${races.length} districts`}`}
         description={`Colored by the model at a national vote of ${fmtMargin(params.env)}.${selectedId && !single ? ` ${selectedId} is outlined.` : ""} Click a district to open it.`}
         action={
-          <Link href={href(stateHref(postal))} className="text-xs font-semibold underline underline-offset-2">
+          <Link href={href(stateHref(postal))} className="link-more text-sm">
             {stateName} overview
           </Link>
         }
@@ -124,7 +124,7 @@ export function SimilarSeats({ race, similar, className = "" }: { race: HouseRac
         description={`Rated seats with the closest lean to ${race.id} (${fmtMargin(race.lean)}).`}
         action={
           similar.length > 0 ? (
-            <Link href={href(`/house?ids=${[race.id, ...similar.map((s) => s.id)].join(",")}`)} className="text-xs font-semibold underline underline-offset-2">
+            <Link href={href(`/house?ids=${[race.id, ...similar.map((s) => s.id)].join(",")}`)} className="link-more text-sm">
               Compare
             </Link>
           ) : undefined
@@ -163,7 +163,7 @@ export function SimilarSeats({ race, similar, className = "" }: { race: HouseRac
 export function SenateLinkCard({ senate }: { senate: SenateLink }) {
   const { href } = useScenario();
   return (
-    <Link href={href(senateHref(senate.state))} className="block rounded-xl border border-line bg-surface p-4 transition-colors hover:bg-surface-2">
+    <Link href={href(senateHref(senate.state))} className="tile block p-4">
       <div className="text-xs font-medium text-ink-2">Also on the ballot</div>
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className="text-sm font-semibold text-ink">

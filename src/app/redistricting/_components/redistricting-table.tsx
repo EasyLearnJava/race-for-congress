@@ -206,7 +206,7 @@ export function RedistrictingTable({
         }
         action={
           ids.length > 0 && (
-            <Link href={href(explorerHref(ids))} className="text-xs font-semibold underline underline-offset-2">
+            <Link href={href(explorerHref(ids))} className="link-more text-sm">
               Open these {ids.length} seats in the explorer
             </Link>
           )

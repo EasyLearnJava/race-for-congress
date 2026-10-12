@@ -7,7 +7,7 @@ import { fmtDate } from "@/lib/format";
 
 export function AiSummary({ summary }: { summary: RaceSummary }) {
   return (
-    <section aria-labelledby="ai-summary-title" className="mt-6 rounded-xl border border-line bg-surface p-4 sm:p-5">
+    <section aria-labelledby="ai-summary-title" className="mt-6 tile p-4 sm:p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="ai-summary-title" className="text-xs font-semibold tracking-[0.12em] text-muted uppercase">
           AI summary from FEC and election data

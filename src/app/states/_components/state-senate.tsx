@@ -66,7 +66,7 @@ export function SenateCard({
       <Card>
         <h2 className="text-base font-semibold text-ink">Senate</h2>
         <p className="mt-1 text-sm text-ink-2">Neither of {name}&apos;s Senate seats is up in 2026.</p>
-        <Link href={href("/senate")} className="mt-3 inline-block text-xs font-semibold underline underline-offset-2">
+        <Link href={href("/senate")} className="mt-3 inline-block link-more text-sm">
           See the 35 Senate races on the ballot
         </Link>
       </Card>

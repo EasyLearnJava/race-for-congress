@@ -298,7 +298,7 @@ export function RatingsMix({
                 {differ.length > 5 && (
                   <Link
                     href={href(explorerHref(differ.map((d) => d.race.id)))}
-                    className="mt-2 inline-block text-xs font-semibold underline underline-offset-2"
+                    className="mt-2 inline-block link-more text-sm"
                   >
                     All {differ.length} in the explorer
                   </Link>

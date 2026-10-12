@@ -81,7 +81,7 @@ export function DataTable<T>({
   const align = (a?: string) => (a === "right" ? "text-right" : a === "center" ? "text-center" : "text-left");
 
   return (
-    <div className="rounded-xl border border-line bg-surface">
+    <div className="overflow-hidden rounded-2xl bg-surface ring-1 ring-line">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-2.5">
         <div className="text-xs text-ink-2">
           {caption ?? (

@@ -8,7 +8,7 @@ import { ThemeToggle } from "./theme-toggle";
 export function SiteHeader() {
   return (
     <header className="site-header material sticky top-0 z-30">
-      <div className="relative mx-auto flex h-14 w-full max-w-7xl items-center gap-4 px-4 sm:px-6">
+      <div className="relative mx-auto flex h-12 w-full max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-baseline gap-2" aria-label="218 Race for Congress, home">
           <span className="font-serif text-2xl leading-none font-bold tracking-tight">218</span>
           <span className="hidden text-[10px] font-semibold tracking-[0.18em] text-ink-2 uppercase 2xl:inline">Race for Congress</span>

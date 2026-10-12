@@ -428,7 +428,7 @@ function Result({
   return (
     <div className="space-y-6">
       {shared && (
-        <div className="rounded-xl border border-line bg-surface-2 p-4 text-sm text-ink">
+        <div className="rounded-2xl bg-surface-2 p-4 text-sm text-ink">
           <strong>Someone shared their call with you.</strong> It is one person&apos;s call, not a forecast and not a view of 218.{" "}
           <button type="button" onClick={onStartOver} className="font-semibold underline underline-offset-2">
             Make your own call
@@ -450,13 +450,13 @@ function Result({
         </p>
         {!shared && (
           <div className="mt-4 flex flex-wrap gap-2">
-            <button type="button" onClick={share} className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-surface hover:opacity-90">
+            <button type="button" onClick={share} className="btn btn-primary press">
               <span aria-live="polite">{copied ? "Link copied" : "Share my call"}</span>
             </button>
-            <button type="button" onClick={onEdit} className="rounded-lg border border-line px-4 py-2 text-sm font-semibold text-ink hover:bg-surface-2">
+            <button type="button" onClick={onEdit} className="btn btn-secondary press">
               {t.open > 0 ? "Keep calling" : "Change my picks"}
             </button>
-            <button type="button" onClick={onStartOver} className="rounded-lg px-3 py-2 text-sm font-medium text-ink-2 hover:bg-surface-2">
+            <button type="button" onClick={onStartOver} className="btn text-ink-2 hover:text-ink">
               Start over
             </button>
           </div>

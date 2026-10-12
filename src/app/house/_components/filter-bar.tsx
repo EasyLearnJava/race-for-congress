@@ -25,7 +25,7 @@ export function FilterBar({ filters, shown, total }: { filters: Filters; shown: 
   const active = activeFilterCount(f);
 
   return (
-    <section aria-label="Filters" className="rounded-xl border border-line bg-surface p-3 sm:p-4">
+    <section aria-label="Filters" className="tile p-3 sm:p-4">
       <div className="flex flex-wrap items-center gap-2">
         <SearchBox value={f.q} />
         <StatePicker selected={f.states} />
@@ -176,7 +176,7 @@ function StatePicker({ selected }: { selected: string[] }) {
           <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" />
         </svg>
       </summary>
-      <div className="absolute top-full left-0 z-30 mt-1 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-line bg-surface p-3 shadow-lg">
+      <div className="absolute top-full left-0 z-30 mt-1 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-line bg-surface p-3 shadow-lg">
         <div className="flex items-center gap-2">
           <label htmlFor="explorer-state-find" className="sr-only">
             Find a state

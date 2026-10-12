@@ -7,15 +7,15 @@ import { PARTY_NAME } from "@/lib/format";
 import { RATING_COLOR, RATING_TEXT, partyColor } from "@/lib/ratings";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-xl border border-line bg-surface p-4 sm:p-5 ${className}`}>{children}</section>;
+  return <section className={`tile reveal p-5 sm:p-7 ${className}`}>{children}</section>;
 }
 
 export function SectionTitle({ title, description, action }: { title: ReactNode; description?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
       <div>
-        <h2 className="text-base font-semibold text-ink">{title}</h2>
-        {description && <p className="mt-0.5 text-sm text-ink-2">{description}</p>}
+        <h2 className="text-lg font-semibold tracking-[-0.01em] text-ink sm:text-xl">{title}</h2>
+        {description && <p className="mt-1 max-w-3xl text-sm leading-6 text-ink-2">{description}</p>}
       </div>
       {action}
     </div>
@@ -36,14 +36,15 @@ export function PageHeader({
   breadcrumbs?: { label: string; href?: string }[];
 }) {
   return (
-    <header className="pt-6 pb-5 sm:pt-8">
+    // Display type sized like apple.com product pages: large, tight tracking, short leading.
+    <header className="pt-8 pb-8 sm:pt-12 sm:pb-10">
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-      {eyebrow && <div className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">{eyebrow}</div>}
-      <div className="mt-1 flex flex-wrap items-end justify-between gap-3">
-        <h1 className="font-serif text-3xl leading-tight font-semibold tracking-tight text-ink sm:text-4xl">{title}</h1>
+      {eyebrow && <div className="mt-3 text-xs font-semibold tracking-[0.14em] text-muted uppercase">{eyebrow}</div>}
+      <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
+        <h1 className="font-serif text-4xl leading-[1.04] font-semibold tracking-[-0.025em] text-ink sm:text-5xl lg:text-6xl">{title}</h1>
         {actions}
       </div>
-      {description && <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-2 sm:text-base">{description}</p>}
+      {description && <p className="mt-4 max-w-3xl text-base leading-7 text-ink-2 sm:text-lg sm:leading-8">{description}</p>}
     </header>
   );
 }
@@ -91,13 +92,14 @@ export function Stat({
         {accent && <span aria-hidden className="size-2 rounded-full" style={{ background: accent }} />}
         {label}
       </div>
-      <div className="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-[28px]">{value}</div>
+      {/* Sized to the tile (container query units), so longer values shrink rather than wrap. */}
+      <div className="mt-2 text-[clamp(22px,16cqi,32px)] leading-none font-semibold tracking-[-0.02em] text-ink">{value}</div>
       {detail && <div className="mt-0.5 text-xs leading-5 text-ink-2">{detail}</div>}
     </>
   );
-  const cls = "block rounded-xl border border-line bg-surface p-4";
+  const cls = "tile block p-5 @container";
   return href ? (
-    <Link href={href} className={`${cls} transition-colors hover:bg-surface-2`}>
+    <Link href={href} className={cls}>
       {body}
     </Link>
   ) : (
@@ -142,7 +144,7 @@ export function Badge({ children, tone = "neutral" }: { children: ReactNode; ton
 
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="rounded-xl border border-line bg-surface-2 p-8 text-center">
+    <div className="rounded-[22px] bg-surface-2 p-8 text-center">
       <div className="text-sm font-semibold text-ink">{title}</div>
       {children && <div className="mt-1 text-sm text-ink-2">{children}</div>}
     </div>

@@ -4,6 +4,7 @@ import { Inter, Newsreader } from "next/font/google";
 import { ScenarioBar } from "@/components/scenario/scenario-bar";
 import { ScenarioProvider } from "@/components/scenario/scenario";
 import { PageviewTracker } from "@/components/site/pageview-tracker";
+import { RevealOnScroll } from "@/components/site/reveal-on-scroll";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { THEME_BOOTSTRAP } from "@/components/site/theme-toggle";
@@ -37,8 +38,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9f9f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d0d0d" },
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
   ],
 };
 
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteFooter />
         </ScenarioProvider>
         <PageviewTracker />
+        <RevealOnScroll />
         {/* Vercel serves its analytics scripts only on Vercel; elsewhere they would 404. */}
         {process.env.VERCEL && <VercelAnalytics />}
       </body>

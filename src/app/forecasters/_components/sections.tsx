@@ -367,7 +367,7 @@ export function FocusPanel({
               Races where {forecaster.short} differs from the consensus category ({diffs.length})
             </h3>
             {chamber === "house" && diffs.length > 0 && (
-              <Link href={href(explorerHref(diffs.map((d) => d.race.id)))} className="text-xs font-semibold underline underline-offset-2">
+              <Link href={href(explorerHref(diffs.map((d) => d.race.id)))} className="link-more text-sm">
                 Open all in the race explorer
               </Link>
             )}

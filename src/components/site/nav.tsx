@@ -68,7 +68,7 @@ export function MainNav() {
           href={item.href === "/data" ? item.href : href(item.href)}
           onClick={onClick}
           aria-current={active ? "page" : undefined}
-          className={`press relative rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors ${
+          className={`press relative rounded-full px-3 py-1 text-[13px] whitespace-nowrap transition-colors ${
             active ? `font-semibold text-ink ${pillBehind ? "" : "bg-surface-2"}` : "text-ink-2 hover:text-ink"
           }`}
         >

@@ -81,7 +81,7 @@ export function ShareCard() {
         <button
           type="button"
           onClick={() => copy(() => inputRef.current?.select())}
-          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-surface hover:opacity-90"
+          className="btn btn-primary btn-sm shrink-0"
         >
           <LinkIcon />
           <span aria-live="polite">{copied ? "Link copied" : "Copy link"}</span>

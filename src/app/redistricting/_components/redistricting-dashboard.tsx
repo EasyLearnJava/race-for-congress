@@ -120,13 +120,13 @@ export function RedistrictingDashboard({
           </>
         }
         actions={
-          <Link href={href(`/house?state=${REDRAWN_2026.join(",")}`)} className="text-xs font-semibold underline underline-offset-2">
+          <Link href={href(`/house?state=${REDRAWN_2026.join(",")}`)} className="link-more text-sm">
             All {seats} seats in the explorer
           </Link>
         }
       />
 
-      <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-line bg-surface px-4 py-3">
+      <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 tile px-4 py-3">
         <span className="text-xs font-medium text-ink-2">Read each seat&apos;s lean by</span>
         <Segmented
           label="Read each seat's lean by"

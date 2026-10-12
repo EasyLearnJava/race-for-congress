@@ -1,6 +1,6 @@
 // Placeholder for a state page while its params resolve (the route's App Shell). Server-safe.
 export function StateSkeleton() {
-  const block = "rounded-xl border border-line bg-surface motion-safe:animate-pulse";
+  const block = "tile motion-safe:animate-pulse";
   return (
     <div className="pb-8" aria-busy="true" aria-label="Loading state">
       <div className="pt-6 pb-5 sm:pt-8">

@@ -249,7 +249,7 @@ function Delta({
 }) {
   const unchanged = /^[+-]?0(\.0)?( pts)?$/.test(delta.replace("+", ""));
   return (
-    <div className="rounded-xl border border-line bg-surface p-4">
+    <div className="tile p-4">
       <div className="text-xs font-medium text-ink-2">{label}</div>
       <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
         <span className="text-2xl font-semibold tracking-tight text-ink tabular-nums sm:text-[28px]">{now}</span>

@@ -130,7 +130,7 @@ function SearchDialog({ state, onClose }: { state: "open" | "closed"; onClose: (
         aria-label="Search"
         data-state={state}
         style={{ "--origin": "top center" } as CSSProperties}
-        className="popover w-full max-w-xl overflow-hidden rounded-xl border border-line bg-surface shadow-2xl"
+        className="popover w-full max-w-xl overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => {
           if (e.key === "Escape") onClose();

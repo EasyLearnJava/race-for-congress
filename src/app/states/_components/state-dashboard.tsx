@@ -230,7 +230,7 @@ export function StateDashboard({
               description="Seats nearest a coin flip in this scenario."
               action={
                 competitive.length > 0 ? (
-                  <Link href={href(`/house?state=${postal}&competitive=1`)} className="text-xs font-semibold underline underline-offset-2">
+                  <Link href={href(`/house?state=${postal}&competitive=1`)} className="link-more text-sm">
                     All competitive
                   </Link>
                 ) : undefined
