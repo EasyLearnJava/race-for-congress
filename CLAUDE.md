@@ -8,7 +8,7 @@ A nonpartisan, interactive simulator for the 2026 US midterms: move the national
 - `npm run dev`: local dev server at http://localhost:3000
 - `npm run build`: production build (must pass before committing)
 - `npm run lint`: ESLint (must pass before committing)
-- `.venv/Scripts/python pipeline/run.py [--refresh]`: rebuild and validate `data/clean/` (see `data/README.md`)
+- `.venv/Scripts/python pipeline/run.py [--refresh [fec,wikipedia]]`: rebuild and validate `data/clean/` (see `data/README.md`). A nightly GitHub Action does this and publishes through `pipeline/diff_guard.py`.
 
 ## Stack
 - Next.js 16 App Router under `src/`, TypeScript strict, Tailwind CSS v4.

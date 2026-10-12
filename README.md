@@ -43,7 +43,7 @@ npm run dev            # http://localhost:3000
 
 # Rebuild the data from public sources (Python 3.12+)
 python -m venv .venv
-.venv/Scripts/python -m pip install -r pipeline/requirements.txt
+.venv/Scripts/python -m pip install -r pipeline/requirements.txt -c pipeline/constraints.txt
 .venv/Scripts/python pipeline/run.py --refresh
 
 npm test               # model unit tests

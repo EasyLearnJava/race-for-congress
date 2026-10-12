@@ -6,12 +6,26 @@ Everything in `clean/` is produced by the scripts in `../pipeline/` and is the s
 
 ```bash
 python -m venv .venv
-.venv/Scripts/python -m pip install -r pipeline/requirements.txt
-.venv/Scripts/python pipeline/run.py            # reuse earlier downloads
-.venv/Scripts/python pipeline/run.py --refresh  # download everything again (ratings change often)
+.venv/Scripts/python -m pip install -r pipeline/requirements.txt -c pipeline/constraints.txt
+.venv/Scripts/python pipeline/run.py                          # reuse earlier downloads
+.venv/Scripts/python pipeline/run.py --refresh                # download everything again
+.venv/Scripts/python pipeline/run.py --refresh fec,wikipedia  # only the sources that change daily
 ```
 
-`run.py` builds every file below and then runs `validate.py`. It exits with an error if any check fails.
+`run.py` builds every file below and then runs `validate.py`. It exits with an error if any check fails. `--refresh` takes `data/raw` folder names (`fec`, `wikipedia`, `downballot`, `hexmap`).
+
+## Nightly refresh
+
+`.github/workflows/nightly-data.yml` runs every day at 10:17 UTC (and on demand from the Actions tab):
+
+1. `run.py --refresh fec,wikipedia` rebuilds and validates everything. The static sources (hex map, presidential results) come from the Actions cache.
+2. `pipeline/diff_guard.py` compares `clean/` with `main` and decides:
+   - **nothing changed** (only `meta.json` dates): stop.
+   - **routine** (money, polling, a few ratings or minor-party candidates): check the site builds, then commit to `main`. Vercel redeploys.
+   - **unusual** (a major-party nominee or incumbent replaced, a rating moving 3+ steps, more than 60 ratings moving, a forecaster's rows disappearing, the polling average moving more than 2 points, a money table shrinking): push the `data-refresh-review` branch and open or update a pull request with the summary. Nothing is published until a person merges it. Wikipedia can be edited by anyone, so these are what vandalism or a broken parser look like.
+3. If an optional source failed (`meta.json` warnings), the run is marked failed after publishing the rest, so the owner is emailed.
+
+Thresholds live at the top of `diff_guard.py`; tests: `.venv/Scripts/python -m unittest discover -s pipeline -p "test_*.py"`. Run the gate locally with `.venv/Scripts/python pipeline/diff_guard.py`.
 
 **One manual step:** `house_history.csv` needs the MIT Election Lab file, which asks each downloader to fill in a short form. Download `1976-2024-house.tab` from https://doi.org/10.7910/DVN/IG0UN2 into `data/raw/medsl/` and run the pipeline again. Until then, that one file is skipped.
 

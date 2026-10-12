@@ -32,14 +32,29 @@ def today() -> str:
     return datetime.now(UTC).date().isoformat()
 
 
+# Source groups (folders under data/raw, e.g. "fec", "wikipedia") to download again this run,
+# set by run.py --refresh fec,wikipedia. The nightly job refreshes only the sources that change.
+REFRESH_GROUPS: set[str] = set()
+_fetched: set[Path] = set()  # downloaded in this run already; several loaders share files
+
+
+def _group(dest: Path) -> str:
+    try:
+        return dest.resolve().relative_to(RAW.resolve()).parts[0]
+    except ValueError:
+        return ""
+
+
 def fetch(url: str, dest: Path, *, refresh: bool = False, params: dict | None = None) -> Path:
-    """Download url to dest, reusing an earlier download unless refresh is set."""
+    """Download url to dest, reusing an earlier download unless refresh is set (or its group is)."""
+    refresh = (refresh or _group(dest) in REFRESH_GROUPS) and dest not in _fetched
     if dest.exists() and not refresh:
         return dest
     dest.parent.mkdir(parents=True, exist_ok=True)
     response = session.get(url, params=params, timeout=180)
     response.raise_for_status()
     dest.write_bytes(response.content)
+    _fetched.add(dest)
     return dest
 
 
