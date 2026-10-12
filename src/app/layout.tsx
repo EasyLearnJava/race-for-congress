@@ -3,9 +3,11 @@ import { Inter, Newsreader } from "next/font/google";
 
 import { ScenarioBar } from "@/components/scenario/scenario-bar";
 import { ScenarioProvider } from "@/components/scenario/scenario";
+import { PageviewTracker } from "@/components/site/pageview-tracker";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { THEME_BOOTSTRAP } from "@/components/site/theme-toggle";
+import { VercelAnalytics } from "@/components/site/vercel-analytics";
 import { baselineEnvironment, meta } from "@/lib/data";
 import { fmtDate, fmtMargin } from "@/lib/format";
 import "./globals.css";
@@ -64,6 +66,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </main>
           <SiteFooter />
         </ScenarioProvider>
+        <PageviewTracker />
+        {/* Vercel serves its analytics scripts only on Vercel; elsewhere they would 404. */}
+        {process.env.VERCEL && <VercelAnalytics />}
       </body>
     </html>
   );

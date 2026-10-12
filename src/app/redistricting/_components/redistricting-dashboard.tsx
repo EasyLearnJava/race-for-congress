@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import { useScenario } from "@/components/scenario/scenario";
 import { Card, PageHeader, SectionTitle, Stat } from "@/components/ui/primitives";
+import { track } from "@/lib/analytics";
 import { HOUSE_SEATS, REDRAWN_2026, STATE_BY_POSTAL } from "@/lib/data/states";
 import type { HexMap as HexMapData, HouseRace } from "@/lib/data/types";
 import { fmtDate, fmtMargin } from "@/lib/format";
@@ -127,7 +128,15 @@ export function RedistrictingDashboard({
 
       <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-line bg-surface px-4 py-3">
         <span className="text-xs font-medium text-ink-2">Read each seat&apos;s lean by</span>
-        <Segmented label="Read each seat's lean by" value={basis} options={BASES} onChange={setBasis} />
+        <Segmented
+          label="Read each seat's lean by"
+          value={basis}
+          options={BASES}
+          onChange={(v) => {
+            setBasis(v);
+            track("maps_toggled", { control: "basis", to: v });
+          }}
+        />
         <span className="text-xs leading-5 text-ink-2">
           {basis === "pres"
             ? `Who carried the district in 2024, when the national presidential vote was ${fmtMargin(nationalMargin)}.`
@@ -186,7 +195,15 @@ export function RedistrictingDashboard({
                 ? dataSource
                 : `${dataSource} The 2024-lines comparison appears here when that data is loaded.`
             }
-            actions={hasOld ? <Segmented label="Compare the new lines with" value={compare} options={COMPARES} onChange={setCompare} /> : null}
+            actions={hasOld ? <Segmented
+                  label="Compare the new lines with"
+                  value={compare}
+                  options={COMPARES}
+                  onChange={(v) => {
+                    setCompare(v);
+                    track("maps_toggled", { control: "compare", to: v });
+                  }}
+                /> : null}
           />
         </div>
         <div className="lg:col-span-2">

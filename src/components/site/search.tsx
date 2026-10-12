@@ -5,6 +5,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { markNavigationSource } from "@/lib/analytics";
+
 interface Entry {
   kind: "State" | "Senate" | "House";
   label: string;
@@ -99,6 +101,7 @@ function SearchDialog({ onClose }: { onClose: () => void }) {
   const go = (entry: Entry | undefined) => {
     if (!entry) return;
     onClose();
+    markNavigationSource("search");
     router.push(entry.href);
   };
 

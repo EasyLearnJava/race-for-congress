@@ -6,6 +6,7 @@
 import { useId, useRef, useState, useSyncExternalStore } from "react";
 
 import { useScenario } from "@/components/scenario/scenario";
+import { track } from "@/lib/analytics";
 import { Card, SectionTitle } from "@/components/ui/primitives";
 import { fmtMargin } from "@/lib/format";
 
@@ -26,6 +27,7 @@ function useCopy(text: string) {
   const copy = async (fallback?: () => void) => {
     try {
       await navigator.clipboard.writeText(text);
+      track("share_clicked", { surface: "simulator", method: "copy" });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
     } catch {

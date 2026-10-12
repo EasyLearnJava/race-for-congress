@@ -4,6 +4,7 @@
 // Lives in the URL (env, w, inc, sn, sr) so any drill-down link carries the same scenario.
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
 
+import { envBand, track, trackSettled, type ChangeOrigin, type ModelSetting } from "@/lib/analytics";
 import { DEFAULT_PARAMS, type ModelParams } from "@/lib/model/engine";
 import { setSearchParams, useSearchString } from "@/lib/url-state";
 
@@ -15,8 +16,9 @@ interface ScenarioContextValue {
   baselineEnv: number;
   baselineLabel: string;
   isDefault: boolean;
-  set: (patch: Partial<Omit<ModelParams, "baselineEnv">>) => void;
-  reset: () => void;
+  /** Change settings. `origin` says how (drag, keys, preset), for analytics counts only. */
+  set: (patch: Partial<Omit<ModelParams, "baselineEnv">>, origin?: ChangeOrigin) => void;
+  reset: (origin?: ChangeOrigin) => void;
   /** Append the current scenario to an internal link so drill-downs keep it. */
   href: (path: string) => string;
 }
@@ -53,17 +55,24 @@ export function ScenarioProvider({
     };
   }, [query, baselineEnv]);
 
-  const set = useCallback((patch: Partial<Omit<ModelParams, "baselineEnv">>) => {
+  const set = useCallback((patch: Partial<Omit<ModelParams, "baselineEnv">>, origin: ChangeOrigin = {}) => {
     const updates: Record<string, string | null> = {};
+    const how = origin.how ?? "other";
+    const surface = origin.surface ?? "other";
     for (const [field, value] of Object.entries(patch)) {
       const key = SCENARIO_KEYS[field as keyof typeof SCENARIO_KEYS];
-      if (key && typeof value === "number") updates[key] = String(round(value, field === "expertWeight" ? 2 : 1));
+      if (!key || typeof value !== "number") continue;
+      updates[key] = String(round(value, field === "expertWeight" ? 2 : 1));
+      // Counted once the input settles; the band is coarse and symmetric (see analytics.ts).
+      if (field === "env") trackSettled("vote_slider_changed", { how, band: envBand(value), surface }, "env");
+      else trackSettled("model_settings_changed", { setting: field as ModelSetting, surface }, field);
     }
     setSearchParams(updates);
   }, []);
 
-  const reset = useCallback(() => {
+  const reset = useCallback((origin: ChangeOrigin = {}) => {
     setSearchParams(Object.fromEntries(Object.values(SCENARIO_KEYS).map((k) => [k, null])));
+    track("model_settings_changed", { setting: "reset", surface: origin.surface ?? "other" });
   }, []);
 
   const href = useCallback(

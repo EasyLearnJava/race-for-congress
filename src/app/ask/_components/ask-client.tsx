@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Fragment, useState, type ReactNode } from "react";
 
 import { useScenario } from "@/components/scenario/scenario";
+import { track } from "@/lib/analytics";
 import { fmtMargin } from "@/lib/format";
 import { raceHref } from "@/lib/routes";
 
@@ -84,9 +85,11 @@ export function AskClient() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const ask = async (q: string) => {
+  const ask = async (q: string, source: "suggestion" | "typed") => {
     const text = q.trim();
     if (!text || pending) return;
+    // Counts only: the question text is never sent to analytics.
+    track("ai_question", { source });
     setPending(true);
     setError(null);
     setQuestion("");
@@ -130,7 +133,7 @@ export function AskClient() {
                   <button
                     key={s}
                     type="button"
-                    onClick={() => ask(s)}
+                    onClick={() => ask(s, "suggestion")}
                     className="rounded-lg border border-line px-3 py-2 text-left text-sm text-ink hover:bg-surface-2"
                   >
                     {s}
@@ -164,7 +167,7 @@ export function AskClient() {
           className="flex gap-2 border-t border-line p-3"
           onSubmit={(e) => {
             e.preventDefault();
-            ask(question);
+            ask(question, "typed");
           }}
         >
           <label htmlFor="ask-input" className="sr-only">

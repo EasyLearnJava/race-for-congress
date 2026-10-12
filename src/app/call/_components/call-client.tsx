@@ -23,11 +23,15 @@ import {
   type Picks,
   type Tally,
 } from "@/lib/call";
+import { track } from "@/lib/analytics";
 import { districtName, fmtDate, fmtMargin, fmtMoney, fmtProb } from "@/lib/format";
 import { useProjections } from "@/lib/model/use-outlook";
 import { houseHref } from "@/lib/routes";
 import { setSearchParams, useSearch } from "@/lib/url-state";
 import type { CallSources, DeckRace } from "./types";
+
+// Progress is counted at these seat counts only (plus the last seat); never which way a seat went.
+const MILESTONES = [1, 10, 20, 30];
 
 const CHOICE_LABEL: Record<Choice, string> = { D: "Democrat", T: "Toss-up", R: "Republican" };
 const CHOICE_COLOR: Record<Choice, string> = { D: "var(--dem)", T: "var(--r-toss)", R: "var(--rep)" };
@@ -39,6 +43,13 @@ export function CallClient({ races, deck, sources }: { races: CallRace[]; deck: 
   const validIds = useMemo(() => new Set(races.map((r) => r.id)), [races]);
   const picks = useMemo(() => decodePicks((k) => search.get(k), validIds), [search, validIds]);
   const shared = search.get("shared") === "1";
+  // The URL is read after hydration, so this runs once `shared` turns true.
+  const countedVisit = useRef(false);
+  useEffect(() => {
+    if (!shared || countedVisit.current) return;
+    countedVisit.current = true;
+    track("shared_visit", { surface: "call" });
+  }, [shared]);
   const t = useMemo(() => tally(races, picks), [races, picks]);
 
   const [index, setIndex] = useState<number | null>(null);
@@ -57,6 +68,10 @@ export function CallClient({ races, deck, sources }: { races: CallRace[]; deck: 
       const next = new Map(picks);
       next.set(race.id, choice);
       writePicks(next);
+      const called = deck.filter((r) => next.has(r.id)).length;
+      if (!picks.has(race.id) && (MILESTONES.includes(called) || called === deck.length)) {
+        track("call_progress", { called, deck: deck.length, finished: called === deck.length });
+      }
       // Advance to the next seat not called yet, after this one first, then from the top.
       const after = deck.findIndex((r, i) => i > current && !next.has(r.id));
       const before = deck.findIndex((r) => !next.has(r.id));
@@ -373,10 +388,12 @@ function Result({
   const share = async () => {
     try {
       if (navigator.share) {
+        track("share_clicked", { surface: "call", method: "native" });
         await navigator.share({ title: "My 2026 House call", text: callHeadline(t), url: shareUrl });
         return;
       }
       await navigator.clipboard.writeText(shareUrl);
+      track("share_clicked", { surface: "call", method: "copy" });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
@@ -443,10 +460,18 @@ function Result({
             className="w-full min-w-0 rounded-lg border border-line bg-surface-2 px-3 py-2 font-mono text-xs text-ink"
           />
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <a href={imageUrl} download="my-2026-house-call.png" className="font-semibold text-ink underline underline-offset-2">
+            <a
+              href={imageUrl}
+              download="my-2026-house-call.png"
+              onClick={() => track("share_clicked", { surface: "call", method: "image" })}
+              className="font-semibold text-ink underline underline-offset-2">
               Download image (1200×630)
             </a>
-            <a href={storyUrl} download="my-2026-house-call-story.png" className="font-semibold text-ink underline underline-offset-2">
+            <a
+              href={storyUrl}
+              download="my-2026-house-call-story.png"
+              onClick={() => track("share_clicked", { surface: "call", method: "story" })}
+              className="font-semibold text-ink underline underline-offset-2">
               Download story image (9:16)
             </a>
           </div>

@@ -3,8 +3,9 @@
 // The control every dashboard shares: the national environment (and, behind "Model", the
 // model's settings). Sticky under the header on analytic pages; state lives in the URL.
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import { track } from "@/lib/analytics";
 import { DEFAULT_PARAMS } from "@/lib/model/engine";
 import { fmtMargin } from "@/lib/format";
 import { useScenario } from "./scenario";
@@ -22,6 +23,8 @@ export function ScenarioBar() {
   const { params, baselineEnv, baselineLabel, isDefault, set, reset } = useScenario();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  // How the slider is being moved, for analytics counts.
+  const input = useRef<"drag" | "keys">("drag");
 
   const show = SCENARIO_PATHS.some((p) => (p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(`${p}/`)));
   if (!show) return null;
@@ -32,6 +35,7 @@ export function ScenarioBar() {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
+      track("share_clicked", { surface: "scenario", method: "copy" });
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
@@ -59,7 +63,9 @@ export function ScenarioBar() {
                 max={15}
                 step={0.5}
                 value={env}
-                onChange={(e) => set({ env: Number(e.target.value) })}
+                onPointerDown={() => (input.current = "drag")}
+                onKeyDown={() => (input.current = "keys")}
+                onChange={(e) => set({ env: Number(e.target.value) }, { how: input.current, surface: "bar" })}
                 aria-valuetext={env === 0 ? "Even national vote" : `${env > 0 ? "Democrats" : "Republicans"} ahead by ${Math.abs(env)} points`}
                 className="relative z-10 w-full accent-[var(--ink)]"
               />
@@ -80,7 +86,7 @@ export function ScenarioBar() {
           <div className="flex w-full flex-wrap items-center gap-1.5 md:w-auto">
             <button
               type="button"
-              onClick={() => set({ env: baselineEnv })}
+              onClick={() => set({ env: baselineEnv }, { how: "preset", surface: "bar" })}
               className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
                 env === baselineEnv ? "border-ink bg-ink text-surface" : "border-line text-ink-2 hover:bg-surface-2"
               }`}
@@ -92,7 +98,7 @@ export function ScenarioBar() {
               <button
                 key={p.label}
                 type="button"
-                onClick={() => set({ env: p.env })}
+                onClick={() => set({ env: p.env }, { how: "preset", surface: "bar" })}
                 className={`hidden rounded-full border px-2.5 py-1 text-xs font-medium sm:inline-flex ${
                   env === p.env ? "border-ink bg-ink text-surface" : "border-line text-ink-2 hover:bg-surface-2"
                 }`}
@@ -110,7 +116,7 @@ export function ScenarioBar() {
               Model {open ? "▴" : "▾"}
             </button>
             {!isDefault && (
-              <button type="button" onClick={reset} className="rounded-full px-2 py-1 text-xs font-medium text-ink-2 hover:text-ink">
+              <button type="button" onClick={() => reset({ surface: "bar" })} className="rounded-full px-2 py-1 text-xs font-medium text-ink-2 hover:text-ink">
                 Reset
               </button>
             )}
@@ -130,7 +136,7 @@ export function ScenarioBar() {
               step={0.05}
               display={`${Math.round(params.expertWeight * 100)}%`}
               help="0% uses only district lean, the national vote and incumbency. 100% uses only the median published rating."
-              onChange={(v) => set({ expertWeight: v })}
+              onChange={(v) => set({ expertWeight: v }, { surface: "bar" })}
               defaultValue={DEFAULT_PARAMS.expertWeight}
             />
             <Setting
@@ -142,7 +148,7 @@ export function ScenarioBar() {
               step={0.5}
               display={`${params.incumbency.toFixed(1)} pts`}
               help="Extra margin for an incumbent running again."
-              onChange={(v) => set({ incumbency: v })}
+              onChange={(v) => set({ incumbency: v }, { surface: "bar" })}
               defaultValue={DEFAULT_PARAMS.incumbency}
             />
             <Setting
@@ -154,7 +160,7 @@ export function ScenarioBar() {
               step={0.5}
               display={`±${params.sigmaNational.toFixed(1)} pts`}
               help="How far the national vote could land from the setting above. Shared by every race."
-              onChange={(v) => set({ sigmaNational: v })}
+              onChange={(v) => set({ sigmaNational: v }, { surface: "bar" })}
               defaultValue={DEFAULT_PARAMS.sigmaNational}
             />
             <Setting
@@ -166,7 +172,7 @@ export function ScenarioBar() {
               step={0.5}
               display={`±${params.sigmaRace.toFixed(1)} pts`}
               help="Candidate quality, local issues and other surprises in each race, independent of the others."
-              onChange={(v) => set({ sigmaRace: v })}
+              onChange={(v) => set({ sigmaRace: v }, { surface: "bar" })}
               defaultValue={DEFAULT_PARAMS.sigmaRace}
             />
           </div>

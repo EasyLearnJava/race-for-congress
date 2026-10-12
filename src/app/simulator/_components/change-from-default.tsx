@@ -211,7 +211,7 @@ export function ChangeFromDefault({
                 )}
                 <button
                   type="button"
-                  onClick={reset}
+                  onClick={() => reset({ surface: "simulator" })}
                   className="rounded-md px-2 py-1 text-xs font-medium text-ink-2 hover:bg-surface-2 hover:text-ink"
                 >
                   Back to defaults

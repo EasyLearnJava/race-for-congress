@@ -17,7 +17,6 @@ A nonpartisan, interactive simulator for the 2026 US midterms: move the national
   - Zustand + `nuqs` for state kept in the URL
   - d3-scale + hand-built SVG, Observable Plot, Motion
   - Comlink Web Worker for the simulation
-  - PostHog + Vercel Analytics
   - the official Anthropic SDK
 
 ## Layout
@@ -51,7 +50,7 @@ A nonpartisan, interactive simulator for the 2026 US midterms: move the national
 - Same templates and wording for both parties, and no loaded adjectives.
 - Label results "simulation, not a forecast".
 - Never tell users who to vote for. Voting logistics link to https://vote.gov.
-- Never store which party an individual picked. Analytics record counts only.
+- Never store which party an individual picked. Analytics record counts only: track only through `track()` in `src/lib/analytics.ts`, following `docs/TRACKING.md`.
 
 **AI (Claude API)**
 - Model: `claude-opus-5-5`, called through the official Anthropic SDK.

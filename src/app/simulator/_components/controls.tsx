@@ -83,7 +83,7 @@ export function Controls({ house, environment }: { house: SimRace[]; environment
 
   // The polling average is the default: clearing the param gives the exact (unrounded) value.
   const toPollingAverage = () => setSearchParams({ [SCENARIO_KEYS.env]: null });
-  const pick = (p: Preset) => (p.key === "poll" ? toPollingAverage() : set(p.patch));
+  const pick = (p: Preset) => (p.key === "poll" ? toPollingAverage() : set(p.patch, { how: "preset", surface: "simulator" }));
 
   const w = Math.round(params.expertWeight * 100);
   const sn80 = Z80 * params.sigmaNational;
@@ -102,7 +102,7 @@ export function Controls({ house, environment }: { house: SimRace[]; environment
         {!isDefault && (
           <button
             type="button"
-            onClick={reset}
+            onClick={() => reset({ surface: "simulator" })}
             className="rounded-lg border border-line px-3 py-1.5 text-sm font-medium text-ink-2 hover:bg-surface-2 hover:text-ink"
           >
             Reset all to defaults
@@ -132,7 +132,7 @@ export function Controls({ house, environment }: { house: SimRace[]; environment
           ends={["R+15", "D+15"]}
           endColors={["var(--rep)", "var(--dem)"]}
           large
-          onChange={(v) => set({ env: v })}
+          onChange={(v) => set({ env: v }, { surface: "simulator" })}
           onReset={toPollingAverage}
           help={
             <>
@@ -159,7 +159,7 @@ export function Controls({ house, environment }: { house: SimRace[]; environment
           valueText={`${w} percent ratings, ${100 - w} percent fundamentals`}
           defaultValue={DEFAULT_PARAMS.expertWeight}
           ends={["Fundamentals", "Ratings"]}
-          onChange={(v) => set({ expertWeight: v })}
+          onChange={(v) => set({ expertWeight: v }, { surface: "simulator" })}
           help={
             <>
               Expected margin = <strong className="font-semibold text-ink">{w}%</strong> the median published rating +{" "}
@@ -179,7 +179,7 @@ export function Controls({ house, environment }: { house: SimRace[]; environment
           valueText={`${params.incumbency} points`}
           defaultValue={DEFAULT_PARAMS.incumbency}
           ends={["0", "6 pts"]}
-          onChange={(v) => set({ incumbency: v })}
+          onChange={(v) => set({ incumbency: v }, { surface: "simulator" })}
           help={
             <>
               Extra margin for an incumbent running again, added for their party. {runningIncumbents} House incumbents are on the
@@ -198,7 +198,7 @@ export function Controls({ house, environment }: { house: SimRace[]; environment
           valueText={`plus or minus ${params.sigmaNational} points`}
           defaultValue={DEFAULT_PARAMS.sigmaNational}
           ends={["None", "±8"]}
-          onChange={(v) => set({ sigmaNational: v })}
+          onChange={(v) => set({ sigmaNational: v }, { surface: "simulator" })}
           help={
             params.sigmaNational > 0 ? (
               <>
@@ -221,7 +221,7 @@ export function Controls({ house, environment }: { house: SimRace[]; environment
           valueText={`plus or minus ${params.sigmaRace} points`}
           defaultValue={DEFAULT_PARAMS.sigmaRace}
           ends={["None", "±12"]}
-          onChange={(v) => set({ sigmaRace: v })}
+          onChange={(v) => set({ sigmaRace: v }, { surface: "simulator" })}
           help={
             <>
               Candidates, local issues and other surprises in each race. With the national error (±{sigma.toFixed(1)} pts in all), a

@@ -2,6 +2,9 @@
 
 // The race page shared by /house/[id] and /senate/[st]. The route's Server Component builds
 // a RaceData slice (load.ts); everything here follows the shared scenario in the URL.
+import { useEffect } from "react";
+
+import { track, takeNavigationSource } from "@/lib/analytics";
 import { useProjections } from "@/lib/model/use-outlook";
 import { fmtDate, fmtMargin } from "@/lib/format";
 import { CandidatesCard } from "./candidates-card";
@@ -19,6 +22,10 @@ export function RacePage({ data }: { data: RaceData }) {
   const { race } = data;
   const { params, projection, flipPoint, curve } = useRaceModel(race);
   const stateProjections = useProjections(data.stateHouse);
+
+  useEffect(() => {
+    track("race_opened", { race: race.id, chamber: data.chamber, from: takeNavigationSource() });
+  }, [race.id, data.chamber]);
 
   return (
     <div className="pb-8">
