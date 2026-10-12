@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { HexMap } from "@/components/charts/hex-map";
+import { HOUSE_STATES_CREDIT, HouseStatesLegend, HouseStatesMap } from "@/components/charts/house-states-map";
 import { SeatBar, type SeatSegment } from "@/components/charts/seat-bar";
 import { MarginBar, ProbBar } from "@/components/charts/sparkline";
 import { TipRow, TipTitle } from "@/components/charts/tooltip";
@@ -40,6 +41,8 @@ export function Overview({
   const houseOutlook = useHouseOutlook(house);
   const senateOutlook = useSenateOutlook(senate, composition);
   const [mode, setMode] = useState<"model" | "forecasters">("model");
+  // States (geographic, at a glance) or Districts (equal-area: every seat the same size).
+  const [mapView, setMapView] = useState<"states" | "districts">("states");
 
   const projections = useMemo(() => new Map(houseOutlook.projections.map((p) => [p.id, p])), [houseOutlook]);
   const byId = useMemo(() => new Map(house.map((r) => [r.id, r])), [house]);
@@ -201,40 +204,70 @@ export function Overview({
               </span>
             ))}
           </div>
-          <div className="mt-5">
-            <HexMap
-              map={hexmap}
-              ariaLabel={`Map of all 435 House districts colored by ${mode === "model" ? "the model" : "forecaster consensus"}`}
-              fill={(id) => RATING_COLOR[categoryOf(byId.get(id)!)]}
-              hrefFor={(id) => href(houseHref(id))}
-              stateHref={(st) => href(stateHref(st))}
-              tooltip={(id) => {
-                const race = byId.get(id)!;
-                const p = projections.get(id);
-                return (
-                  <>
-                    <TipTitle>
-                      {id} · {race.stateName}
-                    </TipTitle>
-                    <div className="mb-1 text-ink-2">
-                      {race.incumbent ? `${race.incumbent} (${race.incumbentParty || "?"})${race.incumbentRunning ? "" : ", not running"}` : "Open seat"}
-                    </div>
-                    {p && <TipRow color="var(--dem)" label="Democrats win" value={fmtProb(p.forced ? (p.margin > 0 ? 1 : 0) : p.pWin)} />}
-                    {p && <TipRow label="Expected margin" value={fmtMargin(p.margin)} />}
-                    <TipRow label="Forecasters" value={race.rating} />
-                    <TipRow label="District lean" value={fmtMargin(race.lean)} />
-                  </>
-                );
-              }}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold">{mapView === "states" ? "By state" : "Every district, equal size"}</h3>
+            <Segmented
+              label="Map"
+              size="xs"
+              value={mapView}
+              onChange={setMapView}
+              options={[
+                { value: "states", label: "States" },
+                { value: "districts", label: "Districts" },
+              ]}
             />
-            <p className="mt-2 text-[11px] text-muted">
-              Equal-area map: every district is the same size. Congressional District Hexmap by Daniel Donner for{" "}
-              <a href="https://the-db.co/maps" className="underline">
-                The Downballot
-              </a>{" "}
-              (CC BY 4.0).
-            </p>
           </div>
+          {mapView === "states" ? (
+            <div className="mt-3">
+              <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                <HouseStatesLegend />
+              </div>
+              <HouseStatesMap
+                seats={house}
+                categoryOf={(id) => categoryOf(byId.get(id)!)}
+                hrefFor={(st) => href(stateHref(st))}
+                ariaLabel={`Map of the states colored by the share of their House seats leaning each way, ${mode === "model" ? "in this scenario" : "by forecaster consensus"}. Each state links to its page.`}
+              />
+              <p className="mt-2 text-[11px] text-muted">
+                Color shows how a state&apos;s seats lean, not its size: switch to Districts for an equal-area view of all 435 seats. {HOUSE_STATES_CREDIT}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-3">
+              <HexMap
+                map={hexmap}
+                ariaLabel={`Map of all 435 House districts colored by ${mode === "model" ? "the model" : "forecaster consensus"}`}
+                fill={(id) => RATING_COLOR[categoryOf(byId.get(id)!)]}
+                hrefFor={(id) => href(houseHref(id))}
+                stateHref={(st) => href(stateHref(st))}
+                tooltip={(id) => {
+                  const race = byId.get(id)!;
+                  const p = projections.get(id);
+                  return (
+                    <>
+                      <TipTitle>
+                        {id} · {race.stateName}
+                      </TipTitle>
+                      <div className="mb-1 text-ink-2">
+                        {race.incumbent ? `${race.incumbent} (${race.incumbentParty || "?"})${race.incumbentRunning ? "" : ", not running"}` : "Open seat"}
+                      </div>
+                      {p && <TipRow color="var(--dem)" label="Democrats win" value={fmtProb(p.forced ? (p.margin > 0 ? 1 : 0) : p.pWin)} />}
+                      {p && <TipRow label="Expected margin" value={fmtMargin(p.margin)} />}
+                      <TipRow label="Forecasters" value={race.rating} />
+                      <TipRow label="District lean" value={fmtMargin(race.lean)} />
+                    </>
+                  );
+                }}
+              />
+              <p className="mt-2 text-[11px] text-muted">
+                Equal-area map: every district is the same size. Congressional District Hexmap by Daniel Donner for{" "}
+                <a href="https://the-db.co/maps" className="underline">
+                  The Downballot
+                </a>{" "}
+                (CC BY 4.0).
+              </p>
+            </div>
+          )}
         </Card>
 
         <div className="space-y-3">

@@ -30,7 +30,9 @@ const BOXED = ["VT", "NH", "MA", "RI", "CT", "NJ", "DE", "MD"];
 const BOX_H = 34;
 const BOX_TOP = 170;
 // Label nudges where the largest piece's center is a poor spot for text.
-const NUDGE: Record<string, [number, number]> = { FL: [16, 12], LA: [-12, -4], MI: [10, 18], ID: [0, 22], KY: [8, 2], WV: [-3, 4], VA: [10, 4], HI: [10, -16], AK: [0, 6], CA: [-8, 0], MN: [-6, 8] };
+const NUDGE: Record<string, [number, number]> = { FL: [16, 12], LA: [-12, -4], MI: [10, 18], ID: [0, 22], KY: [8, 2], WV: [-3, 4], VA: [10, 4], HI: [0, -26], AK: [0, 6], CA: [-8, 0], MN: [-6, 8] };
+// Labels nudged off their state (over the ocean or the page) use ink, not the state's text color.
+const OUTSIDE = new Set(["HI"]);
 
 const INK = new Map<string, string>((Object.keys(RATING_COLOR) as RatingLabel[]).map((r) => [RATING_COLOR[r], RATING_TEXT[r]]));
 const inkFor = (fill: string | null) => (fill ? (INK.get(fill) ?? "var(--ink)") : "var(--muted)");
@@ -115,7 +117,7 @@ export function UsStateMap({
               const [dx, dy] = NUDGE[s.postal] ?? [0, 0];
               const sub = compact ? null : label?.(s.postal);
               return (
-                <text key={s.postal} x={s.cx + dx} y={s.cy + dy} fill={inkFor(s.color)} fontSize={fontPx}>
+                <text key={s.postal} x={s.cx + dx} y={s.cy + dy} fill={OUTSIDE.has(s.postal) ? "var(--ink)" : inkFor(s.color)} fontSize={fontPx}>
                   <tspan x={s.cx + dx} dy={sub ? "-0.2em" : "0.35em"}>
                     {s.postal}
                   </tspan>

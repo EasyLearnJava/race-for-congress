@@ -104,7 +104,8 @@ export function HexMap({
                   data-id={d.id}
                   style={{ fill: fill(d.id), opacity: dim ? 0.18 : undefined }}
                   stroke="var(--surface)"
-                  strokeWidth={0.8 * unit}
+                  strokeWidth={0.6 * unit}
+                  strokeLinejoin="round"
                   className={`map-fill ${hrefFor ? "cursor-pointer hover:opacity-80" : ""}`}
                 />
               );
@@ -112,7 +113,8 @@ export function HexMap({
           </g>
           <g pointerEvents="none">
             {map.states.map((s) => (
-              <path key={s.state} d={s.d} fill="none" stroke="var(--ink)" strokeOpacity={0.55} strokeWidth={1.2 * unit} />
+              // States are already separated by gaps: a crisp light border, not a dark outline.
+              <path key={s.state} d={s.d} fill="none" stroke="var(--surface)" strokeWidth={1.6 * unit} strokeLinejoin="round" />
             ))}
           </g>
           {selected && (
@@ -147,26 +149,41 @@ export function HexMap({
           )}
           {showStateLabels && (
             <g>
-              {map.states.map((s) => (
-                <text
-                  key={s.state}
-                  x={s.cx}
-                  y={s.cy}
-                  data-state={s.state}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fontSize={labelSize}
-                  fontWeight={700}
-                  fill="var(--ink)"
-                  stroke="var(--surface)"
-                  strokeWidth={labelSize * 0.25}
-                  paintOrder="stroke"
-                  className={stateHref ? "cursor-pointer" : undefined}
-                  pointerEvents={stateHref ? "auto" : "none"}
-                >
-                  {s.state}
-                </text>
-              ))}
+              {/* State labels sit on small rounded chips, readable over any district color. */}
+              {map.states.map((s) => {
+                const w = (s.state.length * 0.66 + 0.9) * labelSize;
+                const h = 1.4 * labelSize;
+                return (
+                  <g key={s.state} className={stateHref ? "cursor-pointer" : undefined} pointerEvents={stateHref ? "auto" : "none"} data-state={s.state}>
+                    <rect
+                      x={s.cx - w / 2}
+                      y={s.cy - h / 2}
+                      width={w}
+                      height={h}
+                      rx={h / 2}
+                      fill="var(--surface)"
+                      fillOpacity={0.92}
+                      stroke="var(--ink)"
+                      strokeOpacity={0.12}
+                      strokeWidth={0.75 * unit}
+                      data-state={s.state}
+                    />
+                    <text
+                      x={s.cx}
+                      y={s.cy}
+                      data-state={s.state}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      fontSize={labelSize}
+                      fontWeight={650}
+                      letterSpacing="0.02em"
+                      fill="var(--ink)"
+                    >
+                      {s.state}
+                    </text>
+                  </g>
+                );
+              })}
             </g>
           )}
         </svg>

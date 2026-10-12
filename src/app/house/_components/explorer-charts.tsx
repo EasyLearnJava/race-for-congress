@@ -2,11 +2,13 @@
 
 // Cross-filter charts for the explorer. Each reads the filtered seats and writes the URL:
 // brushing or clicking selects seats (ids), the rating bars toggle the rating filter.
-import { useMemo, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 import { BarChart, barChartHeight, type BarRow } from "@/components/charts/bar-chart";
 import { ChartFrame, LegendItem } from "@/components/charts/chart-frame";
 import { HexMap } from "@/components/charts/hex-map";
+import { HOUSE_STATES_CREDIT, HouseStatesLegend, HouseStatesMap } from "@/components/charts/house-states-map";
+import { Segmented } from "@/components/ui/segmented";
 import { Histogram, type HistogramBin } from "@/components/charts/histogram";
 import { TipRow, TipTitle } from "@/components/charts/tooltip";
 import { useScenario } from "@/components/scenario/scenario";
@@ -190,6 +192,8 @@ export function ExplorerHexMap({
   const { href } = useScenario();
   const highlight = useMemo(() => (filtered ? new Set(filtered.map((r) => r.race.id)) : null), [filtered]);
   const tableRows = filtered ?? [...rows.values()];
+  const [view, setView] = useState<"districts" | "states">("districts");
+  const seats = useMemo(() => [...rows.values()].map((r) => ({ id: r.race.id, state: r.race.state, stateName: r.race.stateName })), [rows]);
 
   return (
     <ChartFrame
@@ -199,12 +203,28 @@ export function ExplorerHexMap({
           ? `The ${fmtNum(filtered.length)} seats in view, filled by the model's category in this scenario. Other seats are dimmed. Click a district to open it.`
           : "Every seat, filled by the model's category in this scenario. Click a district to open it, or a state label for its page."
       }
-      legend={RATING_ORDER.map((r) => (
-        <LegendItem key={r} color={RATING_COLOR[r]} label={r} />
-      ))}
+      actions={
+        <Segmented
+          label="Map"
+          size="xs"
+          value={view}
+          onChange={setView}
+          options={[
+            { value: "districts", label: "Districts" },
+            { value: "states", label: "States" },
+          ]}
+        />
+      }
+      legend={
+        view === "states" ? (
+          <HouseStatesLegend />
+        ) : (
+          RATING_ORDER.map((r) => <LegendItem key={r} color={RATING_COLOR[r]} label={r} />)
+        )
+      }
       height={0}
       // The plot box keeps the map's aspect ratio, so nothing shifts when the map measures itself.
-      className="h-full [&>div.relative]:aspect-[1000/952]"
+      className={`h-full ${view === "states" ? "[&>div.relative]:aspect-[1100/610]" : "[&>div.relative]:aspect-[1000/952]"}`}
       csvName="house-explorer-map"
       table={{
         columns: [
@@ -220,42 +240,52 @@ export function ExplorerHexMap({
           chance: Number(r.p.pWin.toFixed(4)),
         })),
       }}
-      source={hexSource}
+      source={view === "states" ? `${HOUSE_STATES_CREDIT} Labels count seats leaning each way${filtered ? " among the seats in view" : ""}.` : hexSource}
     >
-      {() => (
-        <HexMap
-          map={map}
-          ariaLabel={`Map of all 435 House districts colored by the model's category${filtered ? `, with the ${filtered.length} seats in view highlighted` : ""}`}
-          fill={(id) => {
-            const r = rows.get(id);
-            return r ? RATING_COLOR[r.category] : "var(--grid)";
-          }}
-          highlight={highlight}
-          hrefFor={(id) => href(houseHref(id))}
-          stateHref={(st) => href(stateHref(st))}
-          tooltip={(id) => {
-            const r = rows.get(id);
-            if (!r) return <TipTitle>{id}</TipTitle>;
-            const { race, p } = r;
-            return (
-              <>
-                <TipTitle>
-                  {id} · {race.stateName}
-                </TipTitle>
-                <div className="mb-1 text-ink-2">
-                  {race.incumbent
-                    ? `${race.incumbent} (${race.incumbentParty || "?"})${race.incumbentRunning ? "" : ", not running"}`
-                    : "No incumbent"}
-                </div>
-                <TipRow color="var(--dem)" label="Democrat wins" value={fmtProb(p.forced ? (p.margin > 0 ? 1 : 0) : p.pWin)} />
-                <TipRow label="Expected margin" value={fmtMargin(p.margin)} />
-                <TipRow label="Forecasters" value={race.rating} />
-                {highlight && !highlight.has(id) && <div className="mt-1 text-[11px] text-muted">Outside the current filters</div>}
-              </>
-            );
-          }}
-        />
-      )}
+      {(width) =>
+        view === "states" ? (
+          <HouseStatesMap
+            width={width}
+            seats={seats}
+            categoryOf={(id) => (highlight && !highlight.has(id) ? null : (rows.get(id)?.category ?? null))}
+            hrefFor={(st) => href(stateHref(st))}
+            ariaLabel="Map of the states colored by the share of their House seats leaning each way in this scenario"
+          />
+        ) : (
+          <HexMap
+            map={map}
+            ariaLabel={`Map of all 435 House districts colored by the model's category${filtered ? `, with the ${filtered.length} seats in view highlighted` : ""}`}
+            fill={(id) => {
+              const r = rows.get(id);
+              return r ? RATING_COLOR[r.category] : "var(--grid)";
+            }}
+            highlight={highlight}
+            hrefFor={(id) => href(houseHref(id))}
+            stateHref={(st) => href(stateHref(st))}
+            tooltip={(id) => {
+              const r = rows.get(id);
+              if (!r) return <TipTitle>{id}</TipTitle>;
+              const { race, p } = r;
+              return (
+                <>
+                  <TipTitle>
+                    {id} · {race.stateName}
+                  </TipTitle>
+                  <div className="mb-1 text-ink-2">
+                    {race.incumbent
+                      ? `${race.incumbent} (${race.incumbentParty || "?"})${race.incumbentRunning ? "" : ", not running"}`
+                      : "No incumbent"}
+                  </div>
+                  <TipRow color="var(--dem)" label="Democrat wins" value={fmtProb(p.forced ? (p.margin > 0 ? 1 : 0) : p.pWin)} />
+                  <TipRow label="Expected margin" value={fmtMargin(p.margin)} />
+                  <TipRow label="Forecasters" value={race.rating} />
+                  {highlight && !highlight.has(id) && <div className="mt-1 text-[11px] text-muted">Outside the current filters</div>}
+                </>
+              );
+            }}
+          />
+        )
+      }
     </ChartFrame>
   );
 }

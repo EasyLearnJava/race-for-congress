@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   memo,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -93,6 +94,8 @@ export interface ScatterPlotProps {
   highlightId?: string | null;
   /** Accessible name. Default: "Scatter plot of {yLabel} against {xLabel}, {n} points". */
   ariaLabel?: string;
+  /** Drawn behind the grid and dots, clipped to the plot: shaded regions, reference lines, annotations. */
+  underlay?: (ctx: { x: (v: number) => number; y: (v: number) => number; plot: { x0: number; y0: number; x1: number; y1: number } }) => ReactNode;
 }
 
 const DOT_R = 4; // default radius: an 8px dot
@@ -207,8 +210,10 @@ export function ScatterPlot({
   labelIds,
   highlightId,
   ariaLabel,
+  underlay,
 }: ScatterPlotProps) {
   const router = useRouter();
+  const clipId = useId();
   const [hoverId, setHoverId] = useState<string | null>(null);
   // The dot holding keyboard focus (only while focus is visible), and the chart's single tab stop.
   const [focusId, setFocusId] = useState<string | null>(null);
@@ -512,6 +517,18 @@ export function ScatterPlot({
         onBlur={onBlur}
         onDragStart={onDragStart}
       >
+        {underlay && (
+          <>
+            <defs>
+              <clipPath id={clipId}>
+                <rect x={layout.plot.x0} y={layout.plot.y0} width={layout.plot.x1 - layout.plot.x0} height={layout.plot.y1 - layout.plot.y0} />
+              </clipPath>
+            </defs>
+            <g pointerEvents="none" clipPath={`url(#${clipId})`}>
+              {underlay({ x: layout.sx, y: layout.sy, plot: layout.plot })}
+            </g>
+          </>
+        )}
         {chrome}
         <g>{dots}</g>
         <g pointerEvents="none">
