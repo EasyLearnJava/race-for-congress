@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-13",
+  "generated": "2026-10-14",
   "national_2024": {
     "harris": 74725325,
     "trump": 77282962,
@@ -17,19 +17,19 @@
     "downballot_hexmap": {
       "license": "CC BY 4.0",
       "name": "Congressional District Hexmap v3.2 (2026) by Daniel Donner for The Downballot",
-      "retrieved": "2026-10-13",
+      "retrieved": "2026-10-14",
       "url": "https://the-db.co/maps"
     },
     "downballot_presidential": {
       "license": "Free to use with credit to The Downballot",
       "name": "The Downballot: 2020 & 2024 presidential results for congressional districts used in the 2026 elections",
-      "retrieved": "2026-10-13",
+      "retrieved": "2026-10-14",
       "url": "https://the-db.co/presbycd"
     },
     "downballot_presidential_2024_lines": {
       "license": "Free to use with credit to The Downballot",
       "name": "The Downballot: 2020 & 2024 presidential results for congressional districts used in the 2024 elections",
-      "retrieved": "2026-10-13",
+      "retrieved": "2026-10-14",
       "sheet": "https://docs.google.com/spreadsheets/d/1ng1i_Dm_RMDnEvauH44pgE6JCUsapcuu8F2pCfeLWFo/edit?gid=1491069057",
       "url": "https://the-db.co/presbycd"
     },
@@ -37,56 +37,56 @@
       "files": "webl26.zip, cn26.zip, candidate_summary_2026.csv",
       "license": "Public domain (U.S. government data). 52 U.S.C. 30111(a)(4) bars using individual contributors' names to solicit contributions or for commercial purposes; only candidate and committee totals are used.",
       "name": "Federal Election Commission: House and Senate current campaigns, candidate master and candidate summary (2025-2026)",
-      "retrieved": "2026-10-13",
+      "retrieved": "2026-10-14",
       "url": "https://www.fec.gov/data/browse-data/?tab=bulk-data"
     },
     "fec_independent_expenditures": {
-      "as_of": "2026-10-13",
+      "as_of": "2026-10-14",
       "license": "Public domain (U.S. government data). 52 U.S.C. 30111(a)(4) bars using individual contributors' names to solicit contributions or for commercial purposes; only candidate and committee totals are used.",
       "name": "Federal Election Commission: independent expenditures from 24- and 48-hour reports (2025-2026)",
-      "retrieved": "2026-10-13",
+      "retrieved": "2026-10-14",
       "url": "https://www.fec.gov/files/bulk-downloads/2026/independent_expenditure_2026.csv"
     },
     "wikipedia_generic_ballot": {
       "credit": "Polling averages by Decision Desk HQ, FiftyPlusOne, NBC News, RealClearPolitics, Silver Bulletin; credit each aggregator by name",
       "license": "CC BY-SA 4.0",
       "name": "Wikipedia: 2026 United States House of Representatives elections, 'Generic congressional ballot aggregate polls' table",
-      "retrieved": "2026-10-13",
-      "revision": 1379916234,
+      "retrieved": "2026-10-14",
+      "revision": 1380152906,
       "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections#Generic_congressional_ballot_aggregate_polls"
     },
     "wikipedia_house": {
       "license": "CC BY-SA 4.0",
       "name": "Wikipedia: 2026 United States House of Representatives elections",
-      "retrieved": "2026-10-13",
-      "revision": 1379916234,
+      "retrieved": "2026-10-14",
+      "revision": 1380152906,
       "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections"
     },
     "wikipedia_house_ratings": {
       "license": "CC BY-SA 4.0",
       "name": "Wikipedia: 2026 United States House of Representatives election ratings",
-      "retrieved": "2026-10-13",
+      "retrieved": "2026-10-14",
       "revision": 1380061680,
       "url": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_election_ratings"
     },
     "wikipedia_senate": {
       "license": "CC BY-SA 4.0",
       "name": "Wikipedia: 2026 United States Senate elections",
-      "retrieved": "2026-10-13",
-      "revision": 1380072645,
+      "retrieved": "2026-10-14",
+      "revision": 1380217940,
       "url": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections"
     },
     "wikipedia_senate_composition": {
       "license": "CC BY-SA 4.0",
       "name": "Wikipedia: 2026 United States Senate elections (seat summary table, seat map, infobox)",
-      "retrieved": "2026-10-13",
-      "revision": 1380072645,
+      "retrieved": "2026-10-14",
+      "revision": 1380217940,
       "url": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections#Summary_results"
     }
   },
   "environment": {
-    "margin": 8.44,
-    "as_of": "2026-10-09",
+    "margin": 8.26,
+    "as_of": "2026-10-13",
     "n_sources": 5,
     "sources": [
       "Decision Desk HQ",
@@ -95,15 +95,15 @@
       "RealClearPolitics",
       "Silver Bulletin"
     ],
-    "oldest": "2026-10-09",
-    "min_margin": 7.8,
+    "oldest": "2026-10-13",
+    "min_margin": 7.7,
     "max_margin": 9.0,
     "by_source": {
-      "Decision Desk HQ": 8.5,
-      "FiftyPlusOne": 7.8,
+      "Decision Desk HQ": 7.7,
+      "FiftyPlusOne": 7.7,
       "NBC News": 9.0,
-      "RealClearPolitics": 7.9,
-      "Silver Bulletin": 9.0
+      "RealClearPolitics": 8.3,
+      "Silver Bulletin": 8.6
     }
   },
   "senate_composition": {
@@ -133,7 +133,7 @@
     "matched_nominees": 1070,
     "unmatched_nominees": 43,
     "latest_coverage": "2026-09-30",
-    "outside_races": 294
+    "outside_races": 296
   },
   "warnings": []
 }
